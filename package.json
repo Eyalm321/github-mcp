@@ -1,6 +1,6 @@
 {
   "name": "@eyalm321/github-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server for GitHub REST API — 1500+ tools covering repos, issues, actions, orgs, pulls, users, and 37 more categories",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
