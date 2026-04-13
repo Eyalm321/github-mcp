@@ -7,7 +7,7 @@ Auto-generated from [GitHub's OpenAPI spec](https://github.com/github/rest-api-d
 ## Installation
 
 ```bash
-npm install github-mcp
+npm install github-rest-mcp
 ```
 
 Or from GitHub Packages:
@@ -41,7 +41,7 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "github": {
       "command": "npx",
-      "args": ["-y", "github-mcp"],
+      "args": ["-y", "github-rest-mcp"],
       "env": {
         "GITHUB_TOKEN": "ghp_your_token_here",
         "GITHUB_MCP_CATEGORIES": "repos,issues,pulls,actions,users,orgs,git,search"

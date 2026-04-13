@@ -73,7 +73,7 @@ jobs:
 
       - name: Publish to npm (unscoped)
         run: |
-          jq '.name = "github-mcp" | del(.publishConfig)' package.json > package-npm.json
+          jq '.name = "github-rest-mcp" | del(.publishConfig)' package.json > package-npm.json
           mv package-npm.json package.json
           npm publish --access public
         env:
