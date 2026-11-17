@@ -49,7 +49,7 @@ import { usersTools } from "./tools/users.js";
 
 const server = new McpServer({
   name: "github-mcp",
-  version: "1.0.3",
+  version: "1.0.4",
 });
 
 const allToolModules = [
