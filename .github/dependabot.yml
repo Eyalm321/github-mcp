@@ -7,10 +7,18 @@ updates:
     open-pull-requests-limit: 5
     cooldown:
       default-days: 14
+    ignore:
+      # @types/node tracks the lowest supported Node major (engines >=22).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       npm-minor-patch:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      # One PR a week for all major bumps; split it if one breaks.
+      npm-major:
+        patterns: ["*"]
+        update-types: ["major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -19,6 +27,5 @@ updates:
     cooldown:
       default-days: 14
     groups:
-      actions-minor-patch:
+      actions:
         patterns: ["*"]
-        update-types: ["minor", "patch"]
