@@ -35,6 +35,27 @@ export const interactionsTools = [
     },
   },
   {
+    name: "github_interactions_get_pull_request_creation_cap_for_org",
+    description: "Get pull request creation cap for an org",
+    inputSchema: z.object({
+      org: z.string().describe("org")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/interaction-limits/pulls/creation-cap`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_interactions_update_pull_request_creation_cap_for_org",
+    description: "Update pull request creation cap for an org",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/orgs/${args.org}/interaction-limits/pulls/creation-cap`, args.body, undefined);
+    },
+  },
+  {
     name: "github_interactions_get_restrictions_for_repo",
     description: "Get interaction restrictions for a repository",
     inputSchema: z.object({
@@ -66,6 +87,63 @@ export const interactionsTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/interaction-limits`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_interactions_get_pull_request_bypass_list_for_repo",
+    description: "Get pull request creation cap bypass list for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/interaction-limits/pulls/bypass-list`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_interactions_set_pull_request_bypass_list_for_repo",
+    description: "Add users to the pull request creation cap bypass list for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/repos/${args.owner}/${args.repo}/interaction-limits/pulls/bypass-list`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_interactions_remove_pull_request_bypass_list_for_repo",
+    description: "Remove users from the pull request creation cap bypass list for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/interaction-limits/pulls/bypass-list`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_interactions_get_pull_request_creation_cap_for_repo",
+    description: "Get pull request creation cap for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/interaction-limits/pulls/creation-cap`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_interactions_update_pull_request_creation_cap_for_repo",
+    description: "Update pull request creation cap for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/repos/${args.owner}/${args.repo}/interaction-limits/pulls/creation-cap`, args.body, undefined);
     },
   },
   {

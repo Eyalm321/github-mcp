@@ -52,7 +52,7 @@ describe("classroomTools", () => {
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ assignment_id: "test-value", page: 1, per_page: 1 });
+      await tool.handler({ assignment_id: "test-value" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
       expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });

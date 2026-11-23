@@ -28,6 +28,29 @@ export const dependencyGraphTools = [
     },
   },
   {
+    name: "github_dependency_graph_fetch_sbom_report",
+    description: "Fetch a software bill of materials (SBOM) for a repository.",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      sbom_uuid: z.string().describe("sbom_uuid")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/dependency-graph/sbom/fetch-report/${args.sbom_uuid}`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_dependency_graph_generate_sbom_report",
+    description: "Request generation of a software bill of materials (SBOM) for a repository.",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/dependency-graph/sbom/generate-report`, undefined, undefined);
+    },
+  },
+  {
     name: "github_dependency_graph_create_repository_snapshot",
     description: "Create a snapshot of dependencies for a repository",
     inputSchema: z.object({

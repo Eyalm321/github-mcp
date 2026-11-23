@@ -69,6 +69,30 @@ export const orgsTools = [
     },
   },
   {
+    name: "github_orgs_create_cluster_deployment_records_job",
+    description: "Create a cluster deployment records job",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      cluster: z.string().describe("cluster"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/orgs/${args.org}/artifacts/metadata/deployment-record/cluster/${args.cluster}/jobs`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_orgs_get_cluster_deployment_records_job",
+    description: "Get cluster deployment records job status",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      cluster: z.string().describe("cluster"),
+      job_id: z.string().describe("job_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/artifacts/metadata/deployment-record/cluster/${args.cluster}/jobs/${args.job_id}`, undefined, undefined);
+    },
+  },
+  {
     name: "github_orgs_create_artifact_storage_record",
     description: "Create artifact metadata storage record",
     inputSchema: z.object({
@@ -980,6 +1004,71 @@ export const orgsTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/orgs/${args.org}/personal-access-tokens/${args.pat_id}/repositories`, undefined, { per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_orgs_external_properties_for_repos_get_organization_app_installations",
+    description: "Get registered app installations for external custom properties",
+    inputSchema: z.object({
+      org: z.string().describe("org")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/properties/installations`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_orgs_external_properties_for_repos_register_organization_app_installation",
+    description: "Register an app installation for external custom properties",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/orgs/${args.org}/properties/installations`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_orgs_external_properties_for_repos_get_organization_definitions",
+    description: "Get all external custom properties for a GitHub App installation in an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/properties/installations/schema`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_orgs_external_properties_for_repos_create_or_update_organization_values",
+    description: "Create or update external custom property values for organization repositories",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/orgs/${args.org}/properties/installations/values`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_orgs_external_properties_for_repos_create_or_update_values_for_organization_property",
+    description: "Create or update external custom property values for a property across organization repositories",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      property_name: z.string().describe("property_name"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/orgs/${args.org}/properties/installations/values/${args.property_name}`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_orgs_external_properties_for_repos_delete_organization_values",
+    description: "Remove all external custom property values for a property across all organization repositories",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      property_name: z.string().describe("property_name")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/orgs/${args.org}/properties/installations/values/${args.property_name}`, undefined, undefined);
     },
   },
   {

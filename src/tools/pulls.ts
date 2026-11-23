@@ -170,6 +170,19 @@ export const pullsTools = [
     },
   },
   {
+    name: "github_pulls_request_copilot_code_review",
+    description: "Request a Copilot code review for a pull request",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      pull_number: z.string().describe("pull_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/pulls/${args.pull_number}/copilot-code-review`, args.body, undefined);
+    },
+  },
+  {
     name: "github_pulls_list_files",
     description: "List pull requests files",
     inputSchema: z.object({
@@ -209,6 +222,32 @@ export const pullsTools = [
     },
   },
   {
+    name: "github_pulls_merge_async",
+    description: "Merge a pull request asynchronously",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      pull_number: z.string().describe("pull_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/repos/${args.owner}/${args.repo}/pulls/${args.pull_number}/merge-async`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_pulls_get_merge_async_result",
+    description: "Get the result of an asynchronous merge",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      pull_number: z.string().describe("pull_number"),
+      uuid: z.string().describe("uuid")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/pulls/${args.pull_number}/merge-async/${args.uuid}`, undefined, undefined);
+    },
+  },
+  {
     name: "github_pulls_list_requested_reviewers",
     description: "Get all requested reviewers for a pull request",
     inputSchema: z.object({
@@ -243,6 +282,19 @@ export const pullsTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/pulls/${args.pull_number}/requested_reviewers`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_pulls_rerequest_reviewers",
+    description: "Rerequest reviewers for a pull request",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      pull_number: z.string().describe("pull_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/pulls/${args.pull_number}/requested_reviewers/rerequest`, args.body, undefined);
     },
   },
   {
@@ -366,6 +418,69 @@ export const pullsTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("PUT", `/repos/${args.owner}/${args.repo}/pulls/${args.pull_number}/update-branch`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_pull_request_stacks_list",
+    description: "List pull request stacks",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      pull_request: z.number().optional().describe("Filter to the stack containing this repository pull request number."),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/stacks`, undefined, { pull_request: args.pull_request, per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_pull_request_stacks_create",
+    description: "Create a pull request stack",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/stacks`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_pull_request_stacks_get",
+    description: "Get a pull request stack",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      stack_number: z.string().describe("stack_number")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/stacks/${args.stack_number}`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_pull_request_stacks_add",
+    description: "Add pull requests to a pull request stack",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      stack_number: z.string().describe("stack_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/stacks/${args.stack_number}/add`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_pull_request_stacks_unstack",
+    description: "Remove pull requests from a pull request stack",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      stack_number: z.string().describe("stack_number")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/stacks/${args.stack_number}/unstack`, undefined, undefined);
     },
   },
 ];

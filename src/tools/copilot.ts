@@ -25,6 +25,28 @@ export const copilotTools = [
     },
   },
   {
+    name: "github_copilot_copilot_enterprise_repos_one_day_report",
+    description: "Get Copilot enterprise repository report for a specific day",
+    inputSchema: z.object({
+      enterprise: z.string().describe("enterprise"),
+      day: z.string().describe("The day to request data for, in `YYYY-MM-DD` format.")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/enterprises/${args.enterprise}/copilot/metrics/reports/repos-1-day`, undefined, { day: args.day });
+    },
+  },
+  {
+    name: "github_copilot_copilot_enterprise_user_teams_one_day_report",
+    description: "Get Copilot enterprise user-teams report for a specific day",
+    inputSchema: z.object({
+      enterprise: z.string().describe("enterprise"),
+      day: z.string().describe("The day to request data for, in `YYYY-MM-DD` format.")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/enterprises/${args.enterprise}/copilot/metrics/reports/user-teams-1-day`, undefined, { day: args.day });
+    },
+  },
+  {
     name: "github_copilot_copilot_users_one_day_usage_metrics",
     description: "Get Copilot users usage metrics for a specific day",
     inputSchema: z.object({
@@ -43,6 +65,59 @@ export const copilotTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/enterprises/${args.enterprise}/copilot/metrics/reports/users-28-day/latest`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_get_enterprise_code_review_policy",
+    description: "Get the Copilot code review policy for an enterprise",
+    inputSchema: z.object({
+      enterprise: z.string().describe("enterprise")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/enterprises/${args.enterprise}/copilot/policies/code-review`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_set_enterprise_code_review_policy",
+    description: "Set the Copilot code review policy for an enterprise",
+    inputSchema: z.object({
+      enterprise: z.string().describe("enterprise"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/enterprises/${args.enterprise}/copilot/policies/code-review`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_copilot_set_enterprise_coding_agent_policy",
+    description: "Set the coding agent policy for an enterprise",
+    inputSchema: z.object({
+      enterprise: z.string().describe("enterprise"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/enterprises/${args.enterprise}/copilot/policies/coding_agent`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_copilot_add_organizations_to_enterprise_coding_agent_policy",
+    description: "Add organizations to the enterprise coding agent policy",
+    inputSchema: z.object({
+      enterprise: z.string().describe("enterprise"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/enterprises/${args.enterprise}/copilot/policies/coding_agent/organizations`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_copilot_remove_organizations_from_enterprise_coding_agent_policy",
+    description: "Remove organizations from the enterprise coding agent policy",
+    inputSchema: z.object({
+      enterprise: z.string().describe("enterprise")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/enterprises/${args.enterprise}/copilot/policies/coding_agent/organizations`, undefined, undefined);
     },
   },
   {
@@ -110,8 +185,50 @@ export const copilotTools = [
     },
   },
   {
+    name: "github_copilot_get_organization_code_review_runner",
+    description: "Get the Copilot code review runner configuration for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/copilot/code-review/runner`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_set_organization_code_review_runner",
+    description: "Set the Copilot code review runner configuration for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/orgs/${args.org}/copilot/code-review/runner`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_copilot_get_organization_code_review_settings",
+    description: "Get Copilot code review settings for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/copilot/code-review/settings`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_update_organization_code_review_settings",
+    description: "Update Copilot code review settings for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/orgs/${args.org}/copilot/code-review/settings`, args.body, undefined);
+    },
+  },
+  {
     name: "github_copilot_get_copilot_coding_agent_permissions_organization",
-    description: "Get Copilot coding agent permissions for an organization",
+    description: "Get Copilot cloud agent permissions for an organization",
     inputSchema: z.object({
       org: z.string().describe("org")
     }),
@@ -121,7 +238,7 @@ export const copilotTools = [
   },
   {
     name: "github_copilot_set_copilot_coding_agent_permissions_organization",
-    description: "Set Copilot coding agent permissions for an organization",
+    description: "Set Copilot cloud agent permissions for an organization",
     inputSchema: z.object({
       org: z.string().describe("org"),
       body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
@@ -132,7 +249,7 @@ export const copilotTools = [
   },
   {
     name: "github_copilot_list_copilot_coding_agent_selected_repositories_for_organization",
-    description: "List repositories enabled for Copilot coding agent in an organization",
+    description: "List repositories enabled for Copilot cloud agent in an organization",
     inputSchema: z.object({
       org: z.string().describe("org"),
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
@@ -144,7 +261,7 @@ export const copilotTools = [
   },
   {
     name: "github_copilot_set_copilot_coding_agent_selected_repositories_for_organization",
-    description: "Set selected repositories for Copilot coding agent in an organization",
+    description: "Set selected repositories for Copilot cloud agent in an organization",
     inputSchema: z.object({
       org: z.string().describe("org"),
       body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
@@ -155,7 +272,7 @@ export const copilotTools = [
   },
   {
     name: "github_copilot_enable_copilot_coding_agent_for_repository_in_organization",
-    description: "Enable a repository for Copilot coding agent in an organization",
+    description: "Enable a repository for Copilot cloud agent in an organization",
     inputSchema: z.object({
       org: z.string().describe("org"),
       repository_id: z.string().describe("repository_id")
@@ -166,7 +283,7 @@ export const copilotTools = [
   },
   {
     name: "github_copilot_disable_copilot_coding_agent_for_repository_in_organization",
-    description: "Disable a repository for Copilot coding agent in an organization",
+    description: "Disable a repository for Copilot cloud agent in an organization",
     inputSchema: z.object({
       org: z.string().describe("org"),
       repository_id: z.string().describe("repository_id")
@@ -197,20 +314,6 @@ export const copilotTools = [
     },
   },
   {
-    name: "github_copilot_copilot_metrics_for_organization",
-    description: "Get Copilot metrics for an organization",
-    inputSchema: z.object({
-      org: z.string().describe("org"),
-      since: z.string().optional().describe("Show usage metrics since this date. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format (`YYYY-MM-DDTHH:MM:SSZ`). Maximum value is 100 days ago."),
-      until: z.string().optional().describe("Show usage metrics until this date. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format (`YYYY-MM-DDTHH:MM:SSZ`) and should not preceed the `since` date if it is passed."),
-      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
-      per_page: z.number().optional().describe("The number of days of metrics to display per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
-    }),
-    handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/orgs/${args.org}/copilot/metrics`, undefined, { since: args.since, until: args.until, page: args.page, per_page: args.per_page });
-    },
-  },
-  {
     name: "github_copilot_copilot_organization_one_day_usage_metrics",
     description: "Get Copilot organization usage metrics for a specific day",
     inputSchema: z.object({
@@ -229,6 +332,28 @@ export const copilotTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/orgs/${args.org}/copilot/metrics/reports/organization-28-day/latest`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_copilot_organization_repos_one_day_report",
+    description: "Get Copilot organization repository report for a specific day",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      day: z.string().describe("The day to request data for, in `YYYY-MM-DD` format.")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/copilot/metrics/reports/repos-1-day`, undefined, { day: args.day });
+    },
+  },
+  {
+    name: "github_copilot_copilot_organization_user_teams_one_day_report",
+    description: "Get Copilot organization user-teams report for a specific day",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      day: z.string().describe("The day to request data for, in `YYYY-MM-DD` format.")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/copilot/metrics/reports/user-teams-1-day`, undefined, { day: args.day });
     },
   },
   {
@@ -253,6 +378,27 @@ export const copilotTools = [
     },
   },
   {
+    name: "github_copilot_get_organization_code_review_policy",
+    description: "Get the Copilot code review policy for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/copilot/policies/code-review`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_set_organization_code_review_policy",
+    description: "Set the Copilot code review policy for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/orgs/${args.org}/copilot/policies/code-review`, args.body, undefined);
+    },
+  },
+  {
     name: "github_copilot_get_copilot_seat_details_for_user",
     description: "Get Copilot seat assignment details for a user",
     inputSchema: z.object({
@@ -264,18 +410,71 @@ export const copilotTools = [
     },
   },
   {
-    name: "github_copilot_copilot_metrics_for_team",
-    description: "Get Copilot metrics for a team",
+    name: "github_copilot_get_copilot_team_customizations",
+    description: "Get Copilot customizations for a team",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      team_slug: z.string().describe("team_slug")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/teams/${args.team_slug}/copilot/customizations`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_set_copilot_team_customizations",
+    description: "Set Copilot customizations for a team",
     inputSchema: z.object({
       org: z.string().describe("org"),
       team_slug: z.string().describe("team_slug"),
-      since: z.string().optional().describe("Show usage metrics since this date. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format (`YYYY-MM-DDTHH:MM:SSZ`). Maximum value is 100 days ago."),
-      until: z.string().optional().describe("Show usage metrics until this date. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format (`YYYY-MM-DDTHH:MM:SSZ`) and should not preceed the `since` date if it is passed."),
-      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
-      per_page: z.number().optional().describe("The number of days of metrics to display per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/orgs/${args.org}/team/${args.team_slug}/copilot/metrics`, undefined, { since: args.since, until: args.until, page: args.page, per_page: args.per_page });
+      return githubRequest("PUT", `/orgs/${args.org}/teams/${args.team_slug}/copilot/customizations`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_copilot_delete_copilot_team_customizations",
+    description: "Delete Copilot customizations for a team",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      team_slug: z.string().describe("team_slug")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/orgs/${args.org}/teams/${args.team_slug}/copilot/customizations`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_get_copilot_cloud_agent_configuration",
+    description: "Get Copilot cloud agent configuration for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/copilot/cloud-agent/configuration`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_get_repository_code_review_settings",
+    description: "Get Copilot code review settings for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/copilot/code-review/settings`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_copilot_update_repository_code_review_settings",
+    description: "Update Copilot code review settings for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/repos/${args.owner}/${args.repo}/copilot/code-review/settings`, args.body, undefined);
     },
   },
 ];

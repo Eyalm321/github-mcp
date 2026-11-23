@@ -13,13 +13,31 @@ const mockRequest = vi.mocked(githubRequest);
 describe("billingTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 10 tools", () => {
-    expect(billingTools).toHaveLength(10);
+  it("exports 13 tools", () => {
+    expect(billingTools).toHaveLength(13);
   });
 
   it("has no duplicate tool names", () => {
     const names = billingTools.map((t: any) => t.name);
     expect(new Set(names).size).toBe(names.length);
+  });
+
+  describe("github_billing_get_github_billing_ai_credit_usage_report_org", () => {
+    const tool = billingTools.find((t: any) => t.name === "github_billing_get_github_billing_ai_credit_usage_report_org")!;
+
+    it("exists and has required properties", () => {
+      expect(tool).toBeDefined();
+      expect(tool.name).toBe("github_billing_get_github_billing_ai_credit_usage_report_org");
+      expect(tool.description).toBeTruthy();
+      expect(tool.inputSchema).toBeDefined();
+      expect(tool.handler).toBeInstanceOf(Function);
+    });
+
+    it("calls githubRequest", async () => {
+      await tool.handler({ org: "test-value", year: 1, month: 1 });
+      expect(mockRequest).toHaveBeenCalledTimes(1);
+      expect(mockRequest.mock.calls[0][0]).toBe("GET");
+    });
   });
 
   describe("github_billing_get_all_budgets_org", () => {
@@ -40,39 +58,21 @@ describe("billingTools", () => {
     });
   });
 
-  describe("github_billing_get_budget_org", () => {
-    const tool = billingTools.find((t: any) => t.name === "github_billing_get_budget_org")!;
+  describe("github_billing_create_organization_budget", () => {
+    const tool = billingTools.find((t: any) => t.name === "github_billing_create_organization_budget")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_billing_get_budget_org");
+      expect(tool.name).toBe("github_billing_create_organization_budget");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ org: "test-value", budget_id: "test-value" });
+      await tool.handler({ org: "test-value", body: { test: true } });
       expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("GET");
-    });
-  });
-
-  describe("github_billing_update_budget_org", () => {
-    const tool = billingTools.find((t: any) => t.name === "github_billing_update_budget_org")!;
-
-    it("exists and has required properties", () => {
-      expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_billing_update_budget_org");
-      expect(tool.description).toBeTruthy();
-      expect(tool.inputSchema).toBeDefined();
-      expect(tool.handler).toBeInstanceOf(Function);
-    });
-
-    it("calls githubRequest", async () => {
-      await tool.handler({ org: "test-value", budget_id: "test-value", body: { test: true } });
-      expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("PATCH");
+      expect(mockRequest.mock.calls[0][0]).toBe("POST");
     });
   });
 

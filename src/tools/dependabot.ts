@@ -17,6 +17,7 @@ export const dependabotTools = [
       has: z.unknown().optional().describe("Filters the list of alerts based on whether the alert has the given value. If specified, only alerts meeting this criterion will be returned. Multiple `has` filters can be passed to filter for alerts that have all of the values. Currently, only `patch` is supported."),
       assignee: z.string().optional().describe("Filter alerts by assignees. Provide a comma-separated list of user handles (e.g., `octocat` or `octocat,hubot`) to return alerts assigned to any of the specified users. Use `*` to list alerts with at least one assignee or `none` to list alerts with no assignees."),
       scope: z.enum(["development", "runtime"]).optional().describe("The scope of the vulnerable dependency. If specified, only alerts with this scope will be returned."),
+      relationship: z.string().optional().describe("A comma-separated list of relationships of the vulnerable dependency to your project. If specified, only alerts with these relationships will be returned.  > [!NOTE] > We are rolling out support for dependency relationship across ecosystems. This value will be \"unknown\" for all dependencies in unsupported ecosystems."),
       sort: z.enum(["created", "updated", "epss_percentage"]).optional().describe("The property by which to sort the results. `created` means when the alert was created. `updated` means when the alert's state last changed. `epss_percentage` sorts alerts by the Exploit Prediction Scoring System (EPSS) percentage."),
       direction: z.enum(["asc", "desc"]).optional().describe("The direction to sort the results by."),
       before: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
@@ -24,41 +25,41 @@ export const dependabotTools = [
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/enterprises/${args.enterprise}/dependabot/alerts`, undefined, { classification: args.classification, state: args.state, severity: args.severity, ecosystem: args.ecosystem, package: args.package, epss_percentage: args.epss_percentage, has: args.has, assignee: args.assignee, scope: args.scope, sort: args.sort, direction: args.direction, before: args.before, after: args.after, per_page: args.per_page });
+      return githubRequest("GET", `/enterprises/${args.enterprise}/dependabot/alerts`, undefined, { classification: args.classification, state: args.state, severity: args.severity, ecosystem: args.ecosystem, package: args.package, epss_percentage: args.epss_percentage, has: args.has, assignee: args.assignee, scope: args.scope, relationship: args.relationship, sort: args.sort, direction: args.direction, before: args.before, after: args.after, per_page: args.per_page });
     },
   },
   {
-    name: "github_dependabot_repository_access_for_org",
-    description: "Lists the repositories Dependabot can access in an organization",
+    name: "github_dependabot_repository_access_for_enterprise",
+    description: "Lists the repositories Dependabot can access in an enterprise",
     inputSchema: z.object({
-      org: z.string().describe("org"),
+      enterprise: z.string().describe("enterprise"),
       page: z.number().optional().describe("The page number of results to fetch."),
       per_page: z.number().optional().describe("Number of results per page.")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/organizations/${args.org}/dependabot/repository-access`, undefined, { page: args.page, per_page: args.per_page });
+      return githubRequest("GET", `/enterprises/${args.enterprise}/dependabot/repository-access`, undefined, { page: args.page, per_page: args.per_page });
     },
   },
   {
-    name: "github_dependabot_update_repository_access_for_org",
-    description: "Updates Dependabot's repository access list for an organization",
+    name: "github_dependabot_update_repository_access_for_enterprise",
+    description: "Updates Dependabot's repository access list for an enterprise",
     inputSchema: z.object({
-      org: z.string().describe("org"),
+      enterprise: z.string().describe("enterprise"),
       body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("PATCH", `/organizations/${args.org}/dependabot/repository-access`, args.body, undefined);
+      return githubRequest("PATCH", `/enterprises/${args.enterprise}/dependabot/repository-access`, args.body, undefined);
     },
   },
   {
-    name: "github_dependabot_set_repository_access_default_level",
-    description: "Set the default repository access level for Dependabot",
+    name: "github_dependabot_set_repository_access_default_level_for_enterprise",
+    description: "Set the default repository access level for Dependabot in an enterprise",
     inputSchema: z.object({
-      org: z.string().describe("org"),
+      enterprise: z.string().describe("enterprise"),
       body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("PUT", `/organizations/${args.org}/dependabot/repository-access/default-level`, args.body, undefined);
+      return githubRequest("PUT", `/enterprises/${args.enterprise}/dependabot/repository-access/default-level`, args.body, undefined);
     },
   },
   {
@@ -78,6 +79,7 @@ export const dependabotTools = [
       assignee: z.string().optional().describe("Filter alerts by assignees. Provide a comma-separated list of user handles (e.g., `octocat` or `octocat,hubot`) to return alerts assigned to any of the specified users. Use `*` to list alerts with at least one assignee or `none` to list alerts with no assignees."),
       runtime_risk: z.string().optional().describe("A comma-separated list of runtime risk strings. If specified, only alerts for repositories with deployment records matching these risks will be returned.  Can be: `critical-resource`, `internet-exposed`, `sensitive-data`, `lateral-movement`"),
       scope: z.enum(["development", "runtime"]).optional().describe("The scope of the vulnerable dependency. If specified, only alerts with this scope will be returned."),
+      relationship: z.string().optional().describe("A comma-separated list of relationships of the vulnerable dependency to your project. If specified, only alerts with these relationships will be returned.  > [!NOTE] > We are rolling out support for dependency relationship across ecosystems. This value will be \"unknown\" for all dependencies in unsupported ecosystems."),
       sort: z.enum(["created", "updated", "epss_percentage"]).optional().describe("The property by which to sort the results. `created` means when the alert was created. `updated` means when the alert's state last changed. `epss_percentage` sorts alerts by the Exploit Prediction Scoring System (EPSS) percentage."),
       direction: z.enum(["asc", "desc"]).optional().describe("The direction to sort the results by."),
       before: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
@@ -85,7 +87,41 @@ export const dependabotTools = [
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/orgs/${args.org}/dependabot/alerts`, undefined, { classification: args.classification, state: args.state, severity: args.severity, ecosystem: args.ecosystem, package: args.package, epss_percentage: args.epss_percentage, artifact_registry_url: args.artifact_registry_url, artifact_registry: args.artifact_registry, has: args.has, assignee: args.assignee, runtime_risk: args.runtime_risk, scope: args.scope, sort: args.sort, direction: args.direction, before: args.before, after: args.after, per_page: args.per_page });
+      return githubRequest("GET", `/orgs/${args.org}/dependabot/alerts`, undefined, { classification: args.classification, state: args.state, severity: args.severity, ecosystem: args.ecosystem, package: args.package, epss_percentage: args.epss_percentage, artifact_registry_url: args.artifact_registry_url, artifact_registry: args.artifact_registry, has: args.has, assignee: args.assignee, runtime_risk: args.runtime_risk, scope: args.scope, relationship: args.relationship, sort: args.sort, direction: args.direction, before: args.before, after: args.after, per_page: args.per_page });
+    },
+  },
+  {
+    name: "github_dependabot_repository_access_for_org",
+    description: "Lists the repositories Dependabot can access in an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      page: z.number().optional().describe("The page number of results to fetch."),
+      per_page: z.number().optional().describe("Number of results per page.")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/dependabot/repository-access`, undefined, { page: args.page, per_page: args.per_page });
+    },
+  },
+  {
+    name: "github_dependabot_update_repository_access_for_org",
+    description: "Updates Dependabot's repository access list for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/orgs/${args.org}/dependabot/repository-access`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_dependabot_set_repository_access_default_level",
+    description: "Set the default repository access level for Dependabot",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/orgs/${args.org}/dependabot/repository-access/default-level`, args.body, undefined);
     },
   },
   {
@@ -209,6 +245,7 @@ export const dependabotTools = [
       has: z.unknown().optional().describe("Filters the list of alerts based on whether the alert has the given value. If specified, only alerts meeting this criterion will be returned. Multiple `has` filters can be passed to filter for alerts that have all of the values. Currently, only `patch` is supported."),
       assignee: z.string().optional().describe("Filter alerts by assignees. Provide a comma-separated list of user handles (e.g., `octocat` or `octocat,hubot`) to return alerts assigned to any of the specified users. Use `*` to list alerts with at least one assignee or `none` to list alerts with no assignees."),
       scope: z.enum(["development", "runtime"]).optional().describe("The scope of the vulnerable dependency. If specified, only alerts with this scope will be returned."),
+      relationship: z.string().optional().describe("A comma-separated list of relationships of the vulnerable dependency to your project. If specified, only alerts with these relationships will be returned.  > [!NOTE] > We are rolling out support for dependency relationship across ecosystems. This value will be \"unknown\" for all dependencies in unsupported ecosystems."),
       sort: z.enum(["created", "updated", "epss_percentage"]).optional().describe("The property by which to sort the results. `created` means when the alert was created. `updated` means when the alert's state last changed. `epss_percentage` sorts alerts by the Exploit Prediction Scoring System (EPSS) percentage."),
       direction: z.enum(["asc", "desc"]).optional().describe("The direction to sort the results by."),
       before: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
@@ -216,7 +253,7 @@ export const dependabotTools = [
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/dependabot/alerts`, undefined, { classification: args.classification, state: args.state, severity: args.severity, ecosystem: args.ecosystem, package: args.package, manifest: args.manifest, epss_percentage: args.epss_percentage, has: args.has, assignee: args.assignee, scope: args.scope, sort: args.sort, direction: args.direction, before: args.before, after: args.after, per_page: args.per_page });
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/dependabot/alerts`, undefined, { classification: args.classification, state: args.state, severity: args.severity, ecosystem: args.ecosystem, package: args.package, manifest: args.manifest, epss_percentage: args.epss_percentage, has: args.has, assignee: args.assignee, scope: args.scope, relationship: args.relationship, sort: args.sort, direction: args.direction, before: args.before, after: args.after, per_page: args.per_page });
     },
   },
   {
@@ -242,6 +279,29 @@ export const dependabotTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("PATCH", `/repos/${args.owner}/${args.repo}/dependabot/alerts/${args.alert_number}`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_dependabot_get_repository_runner_settings",
+    description: "Get repository Dependabot runner settings",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/dependabot/runner-settings`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_dependabot_set_repository_runner_settings",
+    description: "Set repository Dependabot runner settings",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/repos/${args.owner}/${args.repo}/dependabot/runner-settings`, args.body, undefined);
     },
   },
   {

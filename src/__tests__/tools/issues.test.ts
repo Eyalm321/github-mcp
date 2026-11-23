@@ -13,8 +13,8 @@ const mockRequest = vi.mocked(githubRequest);
 describe("issuesTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 55 tools", () => {
-    expect(issuesTools).toHaveLength(55);
+  it("exports 66 tools", () => {
+    expect(issuesTools).toHaveLength(66);
   });
 
   it("has no duplicate tool names", () => {

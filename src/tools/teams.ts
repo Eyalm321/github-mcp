@@ -10,7 +10,7 @@ export const teamsTools = [
       org: z.string().describe("org"),
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
       page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
-      team_type: z.enum(["all", "enterprise", "organization"]).optional().describe("Filter team results by their type. For more information, see \"[What kind of team should I use?](https://docs.github.com/enterprise-cloud@latest/admin/concepts/enterprise-fundamentals/teams-in-an-enterprise#what-kind-of-team-should-i-use)\"")
+      team_type: z.enum(["all", "enterprise", "organization"]).optional().describe("Filter team results by their type. For more information, see \"[What kind of team should I use?](https://docs.github.com/admin/concepts/enterprise-fundamentals/teams-in-an-enterprise#what-kind-of-team-should-i-use)\"")
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/orgs/${args.org}/teams`, undefined, { per_page: args.per_page, page: args.page, team_type: args.team_type });

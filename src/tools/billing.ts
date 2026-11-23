@@ -4,16 +4,44 @@ import { githubRequest } from "../client.js";
 
 export const billingTools = [
   {
+    name: "github_billing_get_github_billing_ai_credit_usage_report_org",
+    description: "Get billing AI credit usage report for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      year: z.number().optional().describe("If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year."),
+      month: z.number().optional().describe("If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. Default value is the current month. If no year is specified the default `year` is used."),
+      day: z.number().optional().describe("If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used."),
+      user: z.string().optional().describe("The user name to query usage for. The name is not case sensitive."),
+      model: z.string().optional().describe("The model name to query usage for. The name is not case sensitive."),
+      product: z.string().optional().describe("The product name to query usage for. The name is not case sensitive.")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/organizations/${args.org}/settings/billing/ai_credit/usage`, undefined, { year: args.year, month: args.month, day: args.day, user: args.user, model: args.model, product: args.product });
+    },
+  },
+  {
     name: "github_billing_get_all_budgets_org",
     description: "Get all budgets for an organization",
     inputSchema: z.object({
       org: z.string().describe("org"),
       page: z.number().optional().describe("The page number of the results to fetch."),
-      per_page: z.number().optional().describe("The number of results per page (max 10)."),
-      scope: z.enum(["enterprise", "organization", "repository", "cost_center"]).optional().describe("Filter budgets by scope type.")
+      per_page: z.number().optional().describe("The number of results per page (max 100)."),
+      scope: z.enum(["enterprise", "organization", "repository", "cost_center", "multi_user_customer", "user"]).optional().describe("Filter budgets by scope type.  - `organization`: Budgets scoped to the organization. - `repository`: Budgets scoped to a repository. - `multi_user_customer`: Universal budgets that apply to all users in the organization. - `user`: Budgets scoped to an individual user."),
+      user: z.string().optional().describe("Filter consumed amount details for budgets by the specified user login.")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/organizations/${args.org}/settings/billing/budgets`, undefined, { page: args.page, per_page: args.per_page, scope: args.scope });
+      return githubRequest("GET", `/organizations/${args.org}/settings/billing/budgets`, undefined, { page: args.page, per_page: args.per_page, scope: args.scope, user: args.user });
+    },
+  },
+  {
+    name: "github_billing_create_organization_budget",
+    description: "Create a budget for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/organizations/${args.org}/settings/billing/budgets`, args.body, undefined);
     },
   },
   {
@@ -93,6 +121,21 @@ export const billingTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/organizations/${args.org}/settings/billing/usage/summary`, undefined, { year: args.year, month: args.month, day: args.day, repository: args.repository, product: args.product, sku: args.sku });
+    },
+  },
+  {
+    name: "github_billing_get_github_billing_ai_credit_usage_report_user",
+    description: "Get billing AI credit usage report for a user",
+    inputSchema: z.object({
+      username: z.string().describe("username"),
+      year: z.number().optional().describe("If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year."),
+      month: z.number().optional().describe("If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. Default value is the current month. If no year is specified the default `year` is used."),
+      day: z.number().optional().describe("If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used."),
+      model: z.string().optional().describe("The model name to query usage for. The name is not case sensitive."),
+      product: z.string().optional().describe("The product name to query usage for. The name is not case sensitive.")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/users/${args.username}/settings/billing/ai_credit/usage`, undefined, { year: args.year, month: args.month, day: args.day, model: args.model, product: args.product });
     },
   },
   {

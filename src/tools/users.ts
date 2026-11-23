@@ -195,6 +195,84 @@ export const usersTools = [
     },
   },
   {
+    name: "github_users_list_issue_fields_for_authenticated_user",
+    description: "List issue fields",
+    inputSchema: z.object({}),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/user/issue-fields`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_users_create_issue_field_for_authenticated_user",
+    description: "Create an issue field",
+    inputSchema: z.object({
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/user/issue-fields`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_users_update_issue_field_for_authenticated_user",
+    description: "Update an issue field",
+    inputSchema: z.object({
+      issue_field_id: z.string().describe("issue_field_id"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/user/issue-fields/${args.issue_field_id}`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_users_delete_issue_field_for_authenticated_user",
+    description: "Delete an issue field",
+    inputSchema: z.object({
+      issue_field_id: z.string().describe("issue_field_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/user/issue-fields/${args.issue_field_id}`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_users_list_issue_types_for_authenticated_user",
+    description: "List issue types",
+    inputSchema: z.object({}),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/user/issue-types`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_users_create_issue_type_for_authenticated_user",
+    description: "Create an issue type",
+    inputSchema: z.object({
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/user/issue-types`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_users_update_issue_type_for_authenticated_user",
+    description: "Update an issue type",
+    inputSchema: z.object({
+      issue_type_id: z.string().describe("issue_type_id"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/user/issue-types/${args.issue_type_id}`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_users_delete_issue_type_for_authenticated_user",
+    description: "Delete an issue type",
+    inputSchema: z.object({
+      issue_type_id: z.string().describe("issue_type_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/user/issue-types/${args.issue_type_id}`, undefined, undefined);
+    },
+  },
+  {
     name: "github_users_list_public_ssh_keys_for_authenticated_user",
     description: "List public SSH keys for the authenticated user",
     inputSchema: z.object({

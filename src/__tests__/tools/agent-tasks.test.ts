@@ -40,12 +40,12 @@ describe("agentTasksTools", () => {
     });
   });
 
-  describe("github_agent_tasks_create_task", () => {
-    const tool = agentTasksTools.find((t: any) => t.name === "github_agent_tasks_create_task")!;
+  describe("github_agent_tasks_create_task_in_repo", () => {
+    const tool = agentTasksTools.find((t: any) => t.name === "github_agent_tasks_create_task_in_repo")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_agent_tasks_create_task");
+      expect(tool.name).toBe("github_agent_tasks_create_task_in_repo");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
