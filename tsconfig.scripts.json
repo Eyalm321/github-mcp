@@ -1,13 +1,21 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "commonjs",
-    "lib": ["ES2022"],
+    "module": "nodenext",
+    "lib": [
+      "ES2022"
+    ],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "noEmit": true
+    "noEmit": true,
+    "moduleResolution": "nodenext",
+    "types": [
+      "node"
+    ]
   },
-  "include": ["scripts/**/*"]
+  "include": [
+    "scripts/**/*"
+  ]
 }

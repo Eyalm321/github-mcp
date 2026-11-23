@@ -108,7 +108,7 @@ npm start
 
 ## Regenerating Tools
 
-The tool files in `src/tools/` are auto-generated from GitHub's OpenAPI spec. To update:
+The tool files in `src/tools/` are auto-generated from GitHub's OpenAPI spec. The generator runs as TypeScript straight under Node, so it needs Node 22.18 or newer (type stripping on by default). To update:
 
 ```bash
 # Delete cached spec to force re-download

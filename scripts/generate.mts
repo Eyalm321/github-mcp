@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 /**
  * Code generator: parses GitHub's OpenAPI spec and generates MCP tool files.
  *
@@ -19,8 +19,8 @@ import * as https from "https";
 
 const SPEC_URL =
   "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json";
-const SPEC_CACHE = path.join(__dirname, "..", "api-description.json");
-const SRC_DIR = path.join(__dirname, "..", "src");
+const SPEC_CACHE = path.join(import.meta.dirname, "..", "api-description.json");
+const SRC_DIR = path.join(import.meta.dirname, "..", "src");
 const TOOLS_DIR = path.join(SRC_DIR, "tools");
 const TESTS_DIR = path.join(SRC_DIR, "__tests__", "tools");
 
