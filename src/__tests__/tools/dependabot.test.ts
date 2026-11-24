@@ -13,8 +13,8 @@ const mockRequest = vi.mocked(githubRequest);
 describe("dependabotTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 22 tools", () => {
-    expect(dependabotTools).toHaveLength(22);
+  it("exports 27 tools", () => {
+    expect(dependabotTools).toHaveLength(27);
   });
 
   it("has no duplicate tool names", () => {
@@ -40,37 +40,37 @@ describe("dependabotTools", () => {
     });
   });
 
-  describe("github_dependabot_repository_access_for_org", () => {
-    const tool = dependabotTools.find((t: any) => t.name === "github_dependabot_repository_access_for_org")!;
+  describe("github_dependabot_repository_access_for_enterprise", () => {
+    const tool = dependabotTools.find((t: any) => t.name === "github_dependabot_repository_access_for_enterprise")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_dependabot_repository_access_for_org");
+      expect(tool.name).toBe("github_dependabot_repository_access_for_enterprise");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ org: "test-value", page: 1, per_page: 1 });
+      await tool.handler({ enterprise: "test-value", page: 1, per_page: 1 });
       expect(mockRequest).toHaveBeenCalledTimes(1);
       expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });
   });
 
-  describe("github_dependabot_update_repository_access_for_org", () => {
-    const tool = dependabotTools.find((t: any) => t.name === "github_dependabot_update_repository_access_for_org")!;
+  describe("github_dependabot_update_repository_access_for_enterprise", () => {
+    const tool = dependabotTools.find((t: any) => t.name === "github_dependabot_update_repository_access_for_enterprise")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_dependabot_update_repository_access_for_org");
+      expect(tool.name).toBe("github_dependabot_update_repository_access_for_enterprise");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ org: "test-value", body: { test: true } });
+      await tool.handler({ enterprise: "test-value", body: { test: true } });
       expect(mockRequest).toHaveBeenCalledTimes(1);
       expect(mockRequest.mock.calls[0][0]).toBe("PATCH");
     });

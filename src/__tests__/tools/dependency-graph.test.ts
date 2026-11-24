@@ -13,8 +13,8 @@ const mockRequest = vi.mocked(githubRequest);
 describe("dependencyGraphTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 3 tools", () => {
-    expect(dependencyGraphTools).toHaveLength(3);
+  it("exports 5 tools", () => {
+    expect(dependencyGraphTools).toHaveLength(5);
   });
 
   it("has no duplicate tool names", () => {
@@ -58,21 +58,21 @@ describe("dependencyGraphTools", () => {
     });
   });
 
-  describe("github_dependency_graph_create_repository_snapshot", () => {
-    const tool = dependencyGraphTools.find((t: any) => t.name === "github_dependency_graph_create_repository_snapshot")!;
+  describe("github_dependency_graph_fetch_sbom_report", () => {
+    const tool = dependencyGraphTools.find((t: any) => t.name === "github_dependency_graph_fetch_sbom_report")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_dependency_graph_create_repository_snapshot");
+      expect(tool.name).toBe("github_dependency_graph_fetch_sbom_report");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ owner: "test-value", repo: "test-value", body: { test: true } });
+      await tool.handler({ owner: "test-value", repo: "test-value", sbom_uuid: "test-value" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("POST");
+      expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });
   });
 

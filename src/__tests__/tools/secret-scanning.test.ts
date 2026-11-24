@@ -13,8 +13,8 @@ const mockRequest = vi.mocked(githubRequest);
 describe("secretScanningTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 9 tools", () => {
-    expect(secretScanningTools).toHaveLength(9);
+  it("exports 17 tools", () => {
+    expect(secretScanningTools).toHaveLength(17);
   });
 
   it("has no duplicate tool names", () => {
@@ -40,12 +40,12 @@ describe("secretScanningTools", () => {
     });
   });
 
-  describe("github_secret_scanning_list_org_pattern_configs", () => {
-    const tool = secretScanningTools.find((t: any) => t.name === "github_secret_scanning_list_org_pattern_configs")!;
+  describe("github_secret_scanning_list_org_custom_patterns", () => {
+    const tool = secretScanningTools.find((t: any) => t.name === "github_secret_scanning_list_org_custom_patterns")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_secret_scanning_list_org_pattern_configs");
+      expect(tool.name).toBe("github_secret_scanning_list_org_custom_patterns");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
@@ -58,12 +58,12 @@ describe("secretScanningTools", () => {
     });
   });
 
-  describe("github_secret_scanning_update_org_pattern_configs", () => {
-    const tool = secretScanningTools.find((t: any) => t.name === "github_secret_scanning_update_org_pattern_configs")!;
+  describe("github_secret_scanning_bulk_create_org_custom_patterns", () => {
+    const tool = secretScanningTools.find((t: any) => t.name === "github_secret_scanning_bulk_create_org_custom_patterns")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_secret_scanning_update_org_pattern_configs");
+      expect(tool.name).toBe("github_secret_scanning_bulk_create_org_custom_patterns");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
@@ -72,7 +72,7 @@ describe("secretScanningTools", () => {
     it("calls githubRequest", async () => {
       await tool.handler({ org: "test-value", body: { test: true } });
       expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("PATCH");
+      expect(mockRequest.mock.calls[0][0]).toBe("POST");
     });
   });
 

@@ -13,13 +13,49 @@ const mockRequest = vi.mocked(githubRequest);
 describe("codeScanningTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 21 tools", () => {
-    expect(codeScanningTools).toHaveLength(21);
+  it("exports 25 tools", () => {
+    expect(codeScanningTools).toHaveLength(25);
   });
 
   it("has no duplicate tool names", () => {
     const names = codeScanningTools.map((t: any) => t.name);
     expect(new Set(names).size).toBe(names.length);
+  });
+
+  describe("github_code_scanning_get_ai_scan_enablement_for_org", () => {
+    const tool = codeScanningTools.find((t: any) => t.name === "github_code_scanning_get_ai_scan_enablement_for_org")!;
+
+    it("exists and has required properties", () => {
+      expect(tool).toBeDefined();
+      expect(tool.name).toBe("github_code_scanning_get_ai_scan_enablement_for_org");
+      expect(tool.description).toBeTruthy();
+      expect(tool.inputSchema).toBeDefined();
+      expect(tool.handler).toBeInstanceOf(Function);
+    });
+
+    it("calls githubRequest", async () => {
+      await tool.handler({ org: "test-value" });
+      expect(mockRequest).toHaveBeenCalledTimes(1);
+      expect(mockRequest.mock.calls[0][0]).toBe("GET");
+    });
+  });
+
+  describe("github_code_scanning_update_ai_scan_enablement_for_org", () => {
+    const tool = codeScanningTools.find((t: any) => t.name === "github_code_scanning_update_ai_scan_enablement_for_org")!;
+
+    it("exists and has required properties", () => {
+      expect(tool).toBeDefined();
+      expect(tool.name).toBe("github_code_scanning_update_ai_scan_enablement_for_org");
+      expect(tool.description).toBeTruthy();
+      expect(tool.inputSchema).toBeDefined();
+      expect(tool.handler).toBeInstanceOf(Function);
+    });
+
+    it("calls githubRequest", async () => {
+      await tool.handler({ org: "test-value", body: { test: true } });
+      expect(mockRequest).toHaveBeenCalledTimes(1);
+      expect(mockRequest.mock.calls[0][0]).toBe("PATCH");
+    });
   });
 
   describe("github_code_scanning_list_alerts_for_org", () => {
@@ -35,42 +71,6 @@ describe("codeScanningTools", () => {
 
     it("calls githubRequest", async () => {
       await tool.handler({ org: "test-value" });
-      expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("GET");
-    });
-  });
-
-  describe("github_code_scanning_list_alerts_for_repo", () => {
-    const tool = codeScanningTools.find((t: any) => t.name === "github_code_scanning_list_alerts_for_repo")!;
-
-    it("exists and has required properties", () => {
-      expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_code_scanning_list_alerts_for_repo");
-      expect(tool.description).toBeTruthy();
-      expect(tool.inputSchema).toBeDefined();
-      expect(tool.handler).toBeInstanceOf(Function);
-    });
-
-    it("calls githubRequest", async () => {
-      await tool.handler({ owner: "test-value", repo: "test-value" });
-      expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("GET");
-    });
-  });
-
-  describe("github_code_scanning_get_alert", () => {
-    const tool = codeScanningTools.find((t: any) => t.name === "github_code_scanning_get_alert")!;
-
-    it("exists and has required properties", () => {
-      expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_code_scanning_get_alert");
-      expect(tool.description).toBeTruthy();
-      expect(tool.inputSchema).toBeDefined();
-      expect(tool.handler).toBeInstanceOf(Function);
-    });
-
-    it("calls githubRequest", async () => {
-      await tool.handler({ owner: "test-value", repo: "test-value", alert_number: "test-value" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
       expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });

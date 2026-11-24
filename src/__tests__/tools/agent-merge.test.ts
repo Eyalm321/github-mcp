@@ -6,73 +6,73 @@ vi.mock("../../client.js", () => ({
 }));
 
 import { githubRequest } from "../../client.js";
-import { enterpriseTeamsTools } from "../../tools/enterprise-teams.js";
+import { agentMergeTools } from "../../tools/agent-merge.js";
 
 const mockRequest = vi.mocked(githubRequest);
 
-describe("enterpriseTeamsTools", () => {
+describe("agentMergeTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 5 tools", () => {
-    expect(enterpriseTeamsTools).toHaveLength(5);
+  it("exports 3 tools", () => {
+    expect(agentMergeTools).toHaveLength(3);
   });
 
   it("has no duplicate tool names", () => {
-    const names = enterpriseTeamsTools.map((t: any) => t.name);
+    const names = agentMergeTools.map((t: any) => t.name);
     expect(new Set(names).size).toBe(names.length);
   });
 
-  describe("github_enterprise_teams_list", () => {
-    const tool = enterpriseTeamsTools.find((t: any) => t.name === "github_enterprise_teams_list")!;
+  describe("github_agent_merge_get_agent_merge_enrollment", () => {
+    const tool = agentMergeTools.find((t: any) => t.name === "github_agent_merge_get_agent_merge_enrollment")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_teams_list");
+      expect(tool.name).toBe("github_agent_merge_get_agent_merge_enrollment");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", per_page: 1, page: 1 });
+      await tool.handler({ owner: "test-value", repo: "test-value", pull_number: "test-value" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
       expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });
   });
 
-  describe("github_enterprise_teams_create", () => {
-    const tool = enterpriseTeamsTools.find((t: any) => t.name === "github_enterprise_teams_create")!;
+  describe("github_agent_merge_put_agent_merge_enrollment", () => {
+    const tool = agentMergeTools.find((t: any) => t.name === "github_agent_merge_put_agent_merge_enrollment")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_teams_create");
+      expect(tool.name).toBe("github_agent_merge_put_agent_merge_enrollment");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", body: { test: true } });
+      await tool.handler({ owner: "test-value", repo: "test-value", pull_number: "test-value", body: { test: true } });
       expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("POST");
+      expect(mockRequest.mock.calls[0][0]).toBe("PUT");
     });
   });
 
-  describe("github_enterprise_teams_get", () => {
-    const tool = enterpriseTeamsTools.find((t: any) => t.name === "github_enterprise_teams_get")!;
+  describe("github_agent_merge_delete_agent_merge_enrollment", () => {
+    const tool = agentMergeTools.find((t: any) => t.name === "github_agent_merge_delete_agent_merge_enrollment")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_teams_get");
+      expect(tool.name).toBe("github_agent_merge_delete_agent_merge_enrollment");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", team_slug: "test-value" });
+      await tool.handler({ owner: "test-value", repo: "test-value", pull_number: "test-value" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("GET");
+      expect(mockRequest.mock.calls[0][0]).toBe("DELETE");
     });
   });
 

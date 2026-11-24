@@ -16,15 +16,15 @@ export const agentTasksTools = [
       state: z.string().optional().describe("Comma-separated list of task states to filter by. Can be any combination of: `queued`, `in_progress`, `completed`, `failed`, `idle`, `waiting_for_user`, `timed_out`, `cancelled`."),
       is_archived: z.boolean().optional().describe("Filter by archived status. When `true`, returns only archived tasks. When `false` or omitted, returns only non-archived tasks. Defaults to `false`."),
       since: z.string().optional().describe("Only show tasks updated at or after this time (ISO 8601 timestamp)"),
-      creator_id: z.number().optional().describe("Filter tasks by creator user ID")
+      creator_id: z.array(z.number()).optional().describe("Filter tasks by creator user ID. Accepts one or more user IDs.")
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/agents/repos/${args.owner}/${args.repo}/tasks`, undefined, { per_page: args.per_page, page: args.page, sort: args.sort, direction: args.direction, state: args.state, is_archived: args.is_archived, since: args.since, creator_id: args.creator_id });
     },
   },
   {
-    name: "github_agent_tasks_create_task",
-    description: "Create a task",
+    name: "github_agent_tasks_create_task_in_repo",
+    description: "Start a task",
     inputSchema: z.object({
       owner: z.string().describe("owner"),
       repo: z.string().describe("repo"),

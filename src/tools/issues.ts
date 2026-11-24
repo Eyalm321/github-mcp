@@ -80,6 +80,7 @@ export const issuesTools = [
       type: z.string().optional().describe("Can be the name of an issue type. If the string `*` is passed, issues with any type are accepted. If the string `none` is passed, issues without type are returned."),
       creator: z.string().optional().describe("The user that created the issue."),
       mentioned: z.string().optional().describe("A user that's mentioned in the issue."),
+      issue_field_values: z.string().optional().describe("A comma-separated list of issue field filters in `field_slug:value` format. Only issues matching all specified field values are returned. Requires issue fields to be enabled for the repository. Supports both user-owned and organization-owned repositories. Field availability depends on the owner's issue field visibility settings and the caller's access. For example, `priority:Urgent,severity:High` filters issues where the `priority` field is `Urgent` AND the `severity` field is `High`."),
       labels: z.string().optional().describe("A list of comma separated label names. Example: `bug,ui,@high`"),
       sort: z.enum(["created", "updated", "comments"]).optional().describe("What to sort results by."),
       direction: z.enum(["asc", "desc"]).optional().describe("The direction to sort the results by."),
@@ -88,7 +89,7 @@ export const issuesTools = [
       page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issues`, undefined, { milestone: args.milestone, state: args.state, assignee: args.assignee, type: args.type, creator: args.creator, mentioned: args.mentioned, labels: args.labels, sort: args.sort, direction: args.direction, since: args.since, per_page: args.per_page, page: args.page });
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issues`, undefined, { milestone: args.milestone, state: args.state, assignee: args.assignee, type: args.type, creator: args.creator, mentioned: args.mentioned, issue_field_values: args.issue_field_values, labels: args.labels, sort: args.sort, direction: args.direction, since: args.since, per_page: args.per_page, page: args.page });
     },
   },
   {
@@ -228,6 +229,76 @@ export const issuesTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("PATCH", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_issues_list_issue_artifacts",
+    description: "List issue artifacts",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      type: z.enum(["generic", "link", "plan", "embedded_html"]).optional().describe("The artifact type to return."),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/artifacts`, undefined, { type: args.type, per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_issues_create_issue_artifact",
+    description: "Create an issue artifact",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/artifacts`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_issues_get_issue_artifact",
+    description: "Get an issue artifact",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      artifact_number: z.string().describe("artifact_number"),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/artifacts/${args.artifact_number}`, undefined, { per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_issues_update_issue_artifact",
+    description: "Update an issue artifact",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      artifact_number: z.string().describe("artifact_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/artifacts/${args.artifact_number}`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_issues_delete_issue_artifact",
+    description: "Delete an issue artifact",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      artifact_number: z.string().describe("artifact_number")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/artifacts/${args.artifact_number}`, undefined, undefined);
     },
   },
   {
@@ -379,6 +450,45 @@ export const issuesTools = [
     },
   },
   {
+    name: "github_issues_add_issue_field_values",
+    description: "Add issue field values to an issue",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/issue-field-values`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_issues_set_issue_field_values",
+    description: "Set issue field values for an issue",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/issue-field-values`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_issues_delete_issue_field_value",
+    description: "Delete an issue field value from an issue",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      issue_field_id: z.string().describe("issue_field_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/issue-field-values/${args.issue_field_id}`, undefined, undefined);
+    },
+  },
+  {
     name: "github_issues_list_labels_on_issue",
     description: "List labels for an issue",
     inputSchema: z.object({
@@ -481,6 +591,46 @@ export const issuesTools = [
     },
   },
   {
+    name: "github_issues_list_relates_to",
+    description: "List issues related to an issue",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/relates_to`, undefined, { per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_issues_add_relates_to",
+    description: "Add a related issue",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/relates_to`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_issues_remove_relates_to",
+    description: "Remove a related issue",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      issue_id: z.string().describe("issue_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/relates_to/${args.issue_id}`, undefined, undefined);
+    },
+  },
+  {
     name: "github_issues_remove_sub_issue",
     description: "Remove sub-issue",
     inputSchema: z.object({
@@ -533,6 +683,48 @@ export const issuesTools = [
     },
   },
   {
+    name: "github_issues_list_suggestions",
+    description: "List issue suggestions",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      state: z.enum(["pending", "applied", "approved", "dismissed", "replaced", "invalidated", "all"]).optional().describe("Filter suggestions by their state."),
+      action: z.enum(["set_type", "add_label", "add_field", "add_assignee", "close_issue"]).optional().describe("Filter suggestions by the change they propose."),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/suggestions`, undefined, { state: args.state, action: args.action, per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_issues_approve_suggestion",
+    description: "Approve an issue suggestion",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      suggestion_id: z.string().describe("suggestion_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/suggestions/${args.suggestion_id}/approve`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_issues_dismiss_suggestion",
+    description: "Dismiss an issue suggestion",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      issue_number: z.string().describe("issue_number"),
+      suggestion_id: z.string().describe("suggestion_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/suggestions/${args.suggestion_id}/dismiss`, undefined, undefined);
+    },
+  },
+  {
     name: "github_issues_list_events_for_timeline",
     description: "List timeline events for an issue",
     inputSchema: z.object({
@@ -540,10 +732,11 @@ export const issuesTools = [
       repo: z.string().describe("repo"),
       issue_number: z.string().describe("issue_number"),
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
-      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      exclude: z.string().optional().describe("A comma-separated list of timeline event names to exclude from the response.")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/timeline`, undefined, { per_page: args.per_page, page: args.page });
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issues/${args.issue_number}/timeline`, undefined, { per_page: args.per_page, page: args.page, exclude: args.exclude });
     },
   },
   {
@@ -685,42 +878,6 @@ export const issuesTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/repos/${args.owner}/${args.repo}/milestones/${args.milestone_number}/labels`, undefined, { per_page: args.per_page, page: args.page });
-    },
-  },
-  {
-    name: "github_issues_add_issue_field_values",
-    description: "Add issue field values to an issue",
-    inputSchema: z.object({
-      repository_id: z.string().describe("repository_id"),
-      issue_number: z.string().describe("issue_number"),
-      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
-    }),
-    handler: async (args: Record<string, any>) => {
-      return githubRequest("POST", `/repositories/${args.repository_id}/issues/${args.issue_number}/issue-field-values`, args.body, undefined);
-    },
-  },
-  {
-    name: "github_issues_set_issue_field_values",
-    description: "Set issue field values for an issue",
-    inputSchema: z.object({
-      repository_id: z.string().describe("repository_id"),
-      issue_number: z.string().describe("issue_number"),
-      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
-    }),
-    handler: async (args: Record<string, any>) => {
-      return githubRequest("PUT", `/repositories/${args.repository_id}/issues/${args.issue_number}/issue-field-values`, args.body, undefined);
-    },
-  },
-  {
-    name: "github_issues_delete_issue_field_value",
-    description: "Delete an issue field value from an issue",
-    inputSchema: z.object({
-      repository_id: z.string().describe("repository_id"),
-      issue_number: z.string().describe("issue_number"),
-      issue_field_id: z.string().describe("issue_field_id")
-    }),
-    handler: async (args: Record<string, any>) => {
-      return githubRequest("DELETE", `/repositories/${args.repository_id}/issues/${args.issue_number}/issue-field-values/${args.issue_field_id}`, undefined, undefined);
     },
   },
   {

@@ -63,11 +63,12 @@ export const reposTools = [
       time_period: z.enum(["hour", "day", "week", "month"]).optional().describe("The time period to filter by.  For example, `day` will filter for rule suites that occurred in the past 24 hours, and `week` will filter for rule suites that occurred in the past 7 days (168 hours)."),
       actor_name: z.string().optional().describe("The handle for the GitHub user account to filter on. When specified, only rule evaluations triggered by this actor will be returned."),
       rule_suite_result: z.enum(["pass", "fail", "bypass", "all"]).optional().describe("The rule suite results to filter on. When specified, only suites with this result will be returned."),
+      evaluate_status: z.enum(["all", "active", "evaluate"]).optional().describe("The evaluate status to filter on. When specified, only rule suites resulting from rulesets with the specified evaluate status will be returned.   - `all` - all rule suites will be returned.   - `active` - only rule suites resulting from rulesets in active (non-evaluate) mode will be returned.   - `evaluate` - only rule suites resulting from rulesets in evaluate mode will be returned."),
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
       page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/orgs/${args.org}/rulesets/rule-suites`, undefined, { ref: args.ref, repository_name: args.repository_name, time_period: args.time_period, actor_name: args.actor_name, rule_suite_result: args.rule_suite_result, per_page: args.per_page, page: args.page });
+      return githubRequest("GET", `/orgs/${args.org}/rulesets/rule-suites`, undefined, { ref: args.ref, repository_name: args.repository_name, time_period: args.time_period, actor_name: args.actor_name, rule_suite_result: args.rule_suite_result, evaluate_status: args.evaluate_status, per_page: args.per_page, page: args.page });
     },
   },
   {
@@ -75,10 +76,11 @@ export const reposTools = [
     description: "Get an organization rule suite",
     inputSchema: z.object({
       org: z.string().describe("org"),
-      rule_suite_id: z.string().describe("rule_suite_id")
+      rule_suite_id: z.string().describe("rule_suite_id"),
+      include_metadata: z.boolean().optional().describe("When set to `true`, the response will include additional metadata for pull request and required status check rule evaluation. Results are capped at 50 entries.")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/orgs/${args.org}/rulesets/rule-suites/${args.rule_suite_id}`, undefined, undefined);
+      return githubRequest("GET", `/orgs/${args.org}/rulesets/rule-suites/${args.rule_suite_id}`, undefined, { include_metadata: args.include_metadata });
     },
   },
   {
@@ -741,7 +743,7 @@ export const reposTools = [
       owner: z.string().describe("owner"),
       repo: z.string().describe("repo"),
       affiliation: z.enum(["outside", "direct", "all"]).optional().describe("Filter collaborators returned by their affiliation. `outside` means all outside collaborators of an organization-owned repository. `direct` means all collaborators with permissions to an organization-owned repository, regardless of organization membership status. `all` means all collaborators the authenticated user can see."),
-      permission: z.enum(["pull", "triage", "push", "maintain", "admin"]).optional().describe("Filter collaborators by the permissions they have on the repository. If not specified, all collaborators will be returned."),
+      permission: z.enum(["pull", "triage", "moderate", "push", "maintain", "admin"]).optional().describe("Filter collaborators by the permissions they have on the repository. If not specified, all collaborators will be returned."),
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
       page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
@@ -1353,6 +1355,17 @@ export const reposTools = [
     },
   },
   {
+    name: "github_repos_get_hash_algorithm",
+    description: "Get the hash algorithm for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/hash-algorithm`, undefined, undefined);
+    },
+  },
+  {
     name: "github_repos_list_webhooks",
     description: "List repository webhooks",
     inputSchema: z.object({
@@ -1573,6 +1586,17 @@ export const reposTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/invitations/${args.invitation_id}`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_repos_list_issue_types",
+    description: "List issue types for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/issue-types`, undefined, undefined);
     },
   },
   {
@@ -1797,6 +1821,17 @@ export const reposTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/repos/${args.owner}/${args.repo}/pages/health`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_repos_list_planning_statuses",
+    description: "List planning statuses for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/planning-statuses`, undefined, undefined);
     },
   },
   {
@@ -2094,11 +2129,12 @@ export const reposTools = [
       time_period: z.enum(["hour", "day", "week", "month"]).optional().describe("The time period to filter by.  For example, `day` will filter for rule suites that occurred in the past 24 hours, and `week` will filter for rule suites that occurred in the past 7 days (168 hours)."),
       actor_name: z.string().optional().describe("The handle for the GitHub user account to filter on. When specified, only rule evaluations triggered by this actor will be returned."),
       rule_suite_result: z.enum(["pass", "fail", "bypass", "all"]).optional().describe("The rule suite results to filter on. When specified, only suites with this result will be returned."),
+      evaluate_status: z.enum(["all", "active", "evaluate"]).optional().describe("The evaluate status to filter on. When specified, only rule suites resulting from rulesets with the specified evaluate status will be returned.   - `all` - all rule suites will be returned.   - `active` - only rule suites resulting from rulesets in active (non-evaluate) mode will be returned.   - `evaluate` - only rule suites resulting from rulesets in evaluate mode will be returned."),
       per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
       page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/rulesets/rule-suites`, undefined, { ref: args.ref, time_period: args.time_period, actor_name: args.actor_name, rule_suite_result: args.rule_suite_result, per_page: args.per_page, page: args.page });
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/rulesets/rule-suites`, undefined, { ref: args.ref, time_period: args.time_period, actor_name: args.actor_name, rule_suite_result: args.rule_suite_result, evaluate_status: args.evaluate_status, per_page: args.per_page, page: args.page });
     },
   },
   {
@@ -2107,10 +2143,11 @@ export const reposTools = [
     inputSchema: z.object({
       owner: z.string().describe("owner"),
       repo: z.string().describe("repo"),
-      rule_suite_id: z.string().describe("rule_suite_id")
+      rule_suite_id: z.string().describe("rule_suite_id"),
+      include_metadata: z.boolean().optional().describe("When set to `true`, the response will include additional metadata for pull request and required status check rule evaluation. Results are capped at 50 entries.")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/rulesets/rule-suites/${args.rule_suite_id}`, undefined, undefined);
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/rulesets/rule-suites/${args.rule_suite_id}`, undefined, { include_metadata: args.include_metadata });
     },
   },
   {

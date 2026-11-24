@@ -4,6 +4,27 @@ import { githubRequest } from "../client.js";
 
 export const codeScanningTools = [
   {
+    name: "github_code_scanning_get_ai_scan_enablement_for_org",
+    description: "Get the AI Scan setting for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/code-scanning/ai-scan`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_code_scanning_update_ai_scan_enablement_for_org",
+    description: "Update the AI Scan setting for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/orgs/${args.org}/code-scanning/ai-scan`, args.body, undefined);
+    },
+  },
+  {
     name: "github_code_scanning_list_alerts_for_org",
     description: "List code scanning alerts for an organization",
     inputSchema: z.object({
@@ -22,6 +43,29 @@ export const codeScanningTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/orgs/${args.org}/code-scanning/alerts`, undefined, { tool_name: args.tool_name, tool_guid: args.tool_guid, before: args.before, after: args.after, page: args.page, per_page: args.per_page, direction: args.direction, state: args.state, sort: args.sort, severity: args.severity, assignees: args.assignees });
+    },
+  },
+  {
+    name: "github_code_scanning_get_ai_scan_enablement",
+    description: "Get AI Scan enablement for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/code-scanning/ai-scan`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_code_scanning_update_ai_scan_enablement",
+    description: "Update AI Scan enablement for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/repos/${args.owner}/${args.repo}/code-scanning/ai-scan`, args.body, undefined);
     },
   },
   {

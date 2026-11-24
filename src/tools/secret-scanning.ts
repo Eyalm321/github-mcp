@@ -24,10 +24,62 @@ export const secretScanningTools = [
       validity: z.string().optional().describe("A comma-separated list of validities that, when present, will return alerts that match the validities in this list. Valid options are `active`, `inactive`, and `unknown`."),
       is_publicly_leaked: z.boolean().optional().describe("A boolean value representing whether or not to filter alerts by the publicly-leaked tag being present."),
       is_multi_repo: z.boolean().optional().describe("A boolean value representing whether or not to filter alerts by the multi-repo tag being present."),
-      hide_secret: z.boolean().optional().describe("A boolean value representing whether or not to hide literal secrets in the results.")
+      hide_secret: z.boolean().optional().describe("A boolean value representing whether or not to hide literal secrets in the results."),
+      is_bypassed: z.boolean().optional().describe("A boolean value (`true` or `false`) indicating whether to filter alerts by their push protection bypass status. When set to `true`, only alerts that were created because a push protection rule was bypassed will be returned. When set to `false`, only alerts that were not caused by a push protection bypass will be returned."),
+      included_metadata: z.string().optional().describe("A comma-separated list of metadata fields to filter alerts by. Only alerts that have all of the specified metadata fields attached will be returned. Possible values are: `owner-email`, `owner-id`, `owner-name`, `secret-id`, `secret-name`, `secret-issued-date`, `secret-expiration-date`, `organization-name`, `organization-id`, `last-used-date`, and `has-organization-access`."),
+      owner_email_hash: z.string().optional().describe("Filters alerts to only those whose attached `owner_email` metadata field matches the provided value. The value must be the lowercase hex-encoded SHA-256 hash of the email address to match (for example, the SHA-256 of `user@example.com`). Only alerts that have an `owner_email` metadata value whose SHA-256 hash equals this parameter are returned.")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/orgs/${args.org}/secret-scanning/alerts`, undefined, { state: args.state, secret_type: args.secret_type, exclude_secret_types: args.exclude_secret_types, exclude_providers: args.exclude_providers, providers: args.providers, resolution: args.resolution, assignee: args.assignee, sort: args.sort, direction: args.direction, page: args.page, per_page: args.per_page, before: args.before, after: args.after, validity: args.validity, is_publicly_leaked: args.is_publicly_leaked, is_multi_repo: args.is_multi_repo, hide_secret: args.hide_secret });
+      return githubRequest("GET", `/orgs/${args.org}/secret-scanning/alerts`, undefined, { state: args.state, secret_type: args.secret_type, exclude_secret_types: args.exclude_secret_types, exclude_providers: args.exclude_providers, providers: args.providers, resolution: args.resolution, assignee: args.assignee, sort: args.sort, direction: args.direction, page: args.page, per_page: args.per_page, before: args.before, after: args.after, validity: args.validity, is_publicly_leaked: args.is_publicly_leaked, is_multi_repo: args.is_multi_repo, hide_secret: args.hide_secret, is_bypassed: args.is_bypassed, included_metadata: args.included_metadata, owner_email_hash: args.owner_email_hash });
+    },
+  },
+  {
+    name: "github_secret_scanning_list_org_custom_patterns",
+    description: "List organization custom patterns",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      state: z.enum(["published", "unpublished"]).optional().describe("Filter custom patterns by state. When absent, returns patterns in all states."),
+      push_protection: z.enum(["enabled", "disabled"]).optional().describe("Filter custom patterns by whether push protection is enabled. When absent, returns patterns regardless of push protection status."),
+      sort: z.enum(["created", "updated", "name"]).optional().describe("The property to sort the results by."),
+      direction: z.enum(["asc", "desc"]).optional().describe("The direction to sort the results by."),
+      before: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      after: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/secret-scanning/custom-patterns`, undefined, { state: args.state, push_protection: args.push_protection, sort: args.sort, direction: args.direction, before: args.before, after: args.after });
+    },
+  },
+  {
+    name: "github_secret_scanning_bulk_create_org_custom_patterns",
+    description: "Bulk create organization custom patterns",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/orgs/${args.org}/secret-scanning/custom-patterns`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_secret_scanning_bulk_delete_org_custom_patterns",
+    description: "Bulk delete organization custom patterns",
+    inputSchema: z.object({
+      org: z.string().describe("org")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/orgs/${args.org}/secret-scanning/custom-patterns`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_secret_scanning_update_org_custom_pattern",
+    description: "Update an organization custom pattern",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      pattern_id: z.string().describe("pattern_id"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/orgs/${args.org}/secret-scanning/custom-patterns/${args.pattern_id}`, args.body, undefined);
     },
   },
   {
@@ -73,10 +125,13 @@ export const secretScanningTools = [
       validity: z.string().optional().describe("A comma-separated list of validities that, when present, will return alerts that match the validities in this list. Valid options are `active`, `inactive`, and `unknown`."),
       is_publicly_leaked: z.boolean().optional().describe("A boolean value representing whether or not to filter alerts by the publicly-leaked tag being present."),
       is_multi_repo: z.boolean().optional().describe("A boolean value representing whether or not to filter alerts by the multi-repo tag being present."),
-      hide_secret: z.boolean().optional().describe("A boolean value representing whether or not to hide literal secrets in the results.")
+      hide_secret: z.boolean().optional().describe("A boolean value representing whether or not to hide literal secrets in the results."),
+      is_bypassed: z.boolean().optional().describe("A boolean value (`true` or `false`) indicating whether to filter alerts by their push protection bypass status. When set to `true`, only alerts that were created because a push protection rule was bypassed will be returned. When set to `false`, only alerts that were not caused by a push protection bypass will be returned."),
+      included_metadata: z.string().optional().describe("A comma-separated list of metadata fields to filter alerts by. Only alerts that have all of the specified metadata fields attached will be returned. Possible values are: `owner-email`, `owner-id`, `owner-name`, `secret-id`, `secret-name`, `secret-issued-date`, `secret-expiration-date`, `organization-name`, `organization-id`, `last-used-date`, and `has-organization-access`."),
+      owner_email_hash: z.string().optional().describe("Filters alerts to only those whose attached `owner_email` metadata field matches the provided value. The value must be the lowercase hex-encoded SHA-256 hash of the email address to match (for example, the SHA-256 of `user@example.com`). Only alerts that have an `owner_email` metadata value whose SHA-256 hash equals this parameter are returned.")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/secret-scanning/alerts`, undefined, { state: args.state, secret_type: args.secret_type, exclude_secret_types: args.exclude_secret_types, exclude_providers: args.exclude_providers, providers: args.providers, resolution: args.resolution, assignee: args.assignee, sort: args.sort, direction: args.direction, page: args.page, per_page: args.per_page, before: args.before, after: args.after, validity: args.validity, is_publicly_leaked: args.is_publicly_leaked, is_multi_repo: args.is_multi_repo, hide_secret: args.hide_secret });
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/secret-scanning/alerts`, undefined, { state: args.state, secret_type: args.secret_type, exclude_secret_types: args.exclude_secret_types, exclude_providers: args.exclude_providers, providers: args.providers, resolution: args.resolution, assignee: args.assignee, sort: args.sort, direction: args.direction, page: args.page, per_page: args.per_page, before: args.before, after: args.after, validity: args.validity, is_publicly_leaked: args.is_publicly_leaked, is_multi_repo: args.is_multi_repo, hide_secret: args.hide_secret, is_bypassed: args.is_bypassed, included_metadata: args.included_metadata, owner_email_hash: args.owner_email_hash });
     },
   },
   {
@@ -117,6 +172,59 @@ export const secretScanningTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/repos/${args.owner}/${args.repo}/secret-scanning/alerts/${args.alert_number}/locations`, undefined, { page: args.page, per_page: args.per_page });
+    },
+  },
+  {
+    name: "github_secret_scanning_list_repo_custom_patterns",
+    description: "List repository custom patterns",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      state: z.enum(["published", "unpublished"]).optional().describe("Filter custom patterns by state. When absent, returns patterns in all states."),
+      push_protection: z.enum(["enabled", "disabled"]).optional().describe("Filter custom patterns by whether push protection is enabled. When absent, returns patterns regardless of push protection status."),
+      sort: z.enum(["created", "updated", "name"]).optional().describe("The property to sort the results by."),
+      direction: z.enum(["asc", "desc"]).optional().describe("The direction to sort the results by."),
+      before: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      after: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/secret-scanning/custom-patterns`, undefined, { state: args.state, push_protection: args.push_protection, sort: args.sort, direction: args.direction, before: args.before, after: args.after });
+    },
+  },
+  {
+    name: "github_secret_scanning_bulk_create_repo_custom_patterns",
+    description: "Bulk create repository custom patterns",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/secret-scanning/custom-patterns`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_secret_scanning_bulk_delete_repo_custom_patterns",
+    description: "Bulk delete repository custom patterns",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/secret-scanning/custom-patterns`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_secret_scanning_update_repo_custom_pattern",
+    description: "Update a repository custom pattern",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      pattern_id: z.string().describe("pattern_id"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/repos/${args.owner}/${args.repo}/secret-scanning/custom-patterns/${args.pattern_id}`, args.body, undefined);
     },
   },
   {

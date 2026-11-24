@@ -6,73 +6,73 @@ vi.mock("../../client.js", () => ({
 }));
 
 import { githubRequest } from "../../client.js";
-import { enterpriseTeamOrganizationsTools } from "../../tools/enterprise-team-organizations.js";
+import { copilotSpacesTools } from "../../tools/copilot-spaces.js";
 
 const mockRequest = vi.mocked(githubRequest);
 
-describe("enterpriseTeamOrganizationsTools", () => {
+describe("copilotSpacesTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 6 tools", () => {
-    expect(enterpriseTeamOrganizationsTools).toHaveLength(6);
+  it("exports 28 tools", () => {
+    expect(copilotSpacesTools).toHaveLength(28);
   });
 
   it("has no duplicate tool names", () => {
-    const names = enterpriseTeamOrganizationsTools.map((t: any) => t.name);
+    const names = copilotSpacesTools.map((t: any) => t.name);
     expect(new Set(names).size).toBe(names.length);
   });
 
-  describe("github_enterprise_team_organizations_get_assignments", () => {
-    const tool = enterpriseTeamOrganizationsTools.find((t: any) => t.name === "github_enterprise_team_organizations_get_assignments")!;
+  describe("github_copilot_spaces_list_for_org", () => {
+    const tool = copilotSpacesTools.find((t: any) => t.name === "github_copilot_spaces_list_for_org")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_team_organizations_get_assignments");
+      expect(tool.name).toBe("github_copilot_spaces_list_for_org");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", enterprise_team: "test-value", per_page: 1, page: 1 });
+      await tool.handler({ org: "test-value", per_page: 1, before: "test" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
       expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });
   });
 
-  describe("github_enterprise_team_organizations_bulk_add", () => {
-    const tool = enterpriseTeamOrganizationsTools.find((t: any) => t.name === "github_enterprise_team_organizations_bulk_add")!;
+  describe("github_copilot_spaces_create_for_org", () => {
+    const tool = copilotSpacesTools.find((t: any) => t.name === "github_copilot_spaces_create_for_org")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_team_organizations_bulk_add");
+      expect(tool.name).toBe("github_copilot_spaces_create_for_org");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", enterprise_team: "test-value", body: { test: true } });
+      await tool.handler({ org: "test-value", body: { test: true } });
       expect(mockRequest).toHaveBeenCalledTimes(1);
       expect(mockRequest.mock.calls[0][0]).toBe("POST");
     });
   });
 
-  describe("github_enterprise_team_organizations_bulk_remove", () => {
-    const tool = enterpriseTeamOrganizationsTools.find((t: any) => t.name === "github_enterprise_team_organizations_bulk_remove")!;
+  describe("github_copilot_spaces_get_for_org", () => {
+    const tool = copilotSpacesTools.find((t: any) => t.name === "github_copilot_spaces_get_for_org")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_team_organizations_bulk_remove");
+      expect(tool.name).toBe("github_copilot_spaces_get_for_org");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", enterprise_team: "test-value", body: { test: true } });
+      await tool.handler({ org: "test-value", space_number: "test-value" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("POST");
+      expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });
   });
 

@@ -4,24 +4,26 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { actionsTools } from "./tools/actions.js";
 import { activityTools } from "./tools/activity.js";
+import { agentAutomationsTools } from "./tools/agent-automations.js";
+import { agentMergeTools } from "./tools/agent-merge.js";
 import { agentTasksTools } from "./tools/agent-tasks.js";
+import { agentsTools } from "./tools/agents.js";
 import { appsTools } from "./tools/apps.js";
 import { billingTools } from "./tools/billing.js";
 import { campaignsTools } from "./tools/campaigns.js";
 import { checksTools } from "./tools/checks.js";
 import { classroomTools } from "./tools/classroom.js";
+import { codeQualityTools } from "./tools/code-quality.js";
 import { codeScanningTools } from "./tools/code-scanning.js";
 import { codeSecurityTools } from "./tools/code-security.js";
 import { codesOfConductTools } from "./tools/codes-of-conduct.js";
 import { codespacesTools } from "./tools/codespaces.js";
 import { copilotTools } from "./tools/copilot.js";
+import { copilotSpacesTools } from "./tools/copilot-spaces.js";
 import { credentialsTools } from "./tools/credentials.js";
 import { dependabotTools } from "./tools/dependabot.js";
 import { dependencyGraphTools } from "./tools/dependency-graph.js";
 import { emojisTools } from "./tools/emojis.js";
-import { enterpriseTeamMembershipsTools } from "./tools/enterprise-team-memberships.js";
-import { enterpriseTeamOrganizationsTools } from "./tools/enterprise-team-organizations.js";
-import { enterpriseTeamsTools } from "./tools/enterprise-teams.js";
 import { gistsTools } from "./tools/gists.js";
 import { gitTools } from "./tools/git.js";
 import { gitignoreTools } from "./tools/gitignore.js";
@@ -49,30 +51,32 @@ import { usersTools } from "./tools/users.js";
 
 const server = new McpServer({
   name: "github-mcp",
-  version: "1.0.4",
+  version: "1.0.0",
 });
 
 const allToolModules = [
   { category: "actions", tools: actionsTools },
   { category: "activity", tools: activityTools },
+  { category: "agent-automations", tools: agentAutomationsTools },
+  { category: "agent-merge", tools: agentMergeTools },
   { category: "agent-tasks", tools: agentTasksTools },
+  { category: "agents", tools: agentsTools },
   { category: "apps", tools: appsTools },
   { category: "billing", tools: billingTools },
   { category: "campaigns", tools: campaignsTools },
   { category: "checks", tools: checksTools },
   { category: "classroom", tools: classroomTools },
+  { category: "code-quality", tools: codeQualityTools },
   { category: "code-scanning", tools: codeScanningTools },
   { category: "code-security", tools: codeSecurityTools },
   { category: "codes-of-conduct", tools: codesOfConductTools },
   { category: "codespaces", tools: codespacesTools },
   { category: "copilot", tools: copilotTools },
+  { category: "copilot-spaces", tools: copilotSpacesTools },
   { category: "credentials", tools: credentialsTools },
   { category: "dependabot", tools: dependabotTools },
   { category: "dependency-graph", tools: dependencyGraphTools },
   { category: "emojis", tools: emojisTools },
-  { category: "enterprise-team-memberships", tools: enterpriseTeamMembershipsTools },
-  { category: "enterprise-team-organizations", tools: enterpriseTeamOrganizationsTools },
-  { category: "enterprise-teams", tools: enterpriseTeamsTools },
   { category: "gists", tools: gistsTools },
   { category: "git", tools: gitTools },
   { category: "gitignore", tools: gitignoreTools },

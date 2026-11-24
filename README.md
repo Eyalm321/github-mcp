@@ -1,6 +1,6 @@
 # github-mcp
 
-MCP server for the GitHub REST API — 1,112 tools covering all 44 API categories.
+MCP server for the GitHub REST API — 1,281 tools covering all 46 API categories.
 
 Auto-generated from [GitHub's OpenAPI spec](https://github.com/github/rest-api-description) using a code generator that produces typed tool definitions with Zod validation.
 
@@ -26,7 +26,7 @@ export GITHUB_TOKEN=ghp_your_token_here
 
 ### Category Filter
 
-By default all 1,112 tools are registered. To enable only specific categories:
+By default all 1,281 tools are registered. To enable only specific categories:
 
 ```bash
 export GITHUB_MCP_CATEGORIES=repos,issues,pulls,actions
@@ -55,28 +55,29 @@ Add to your `claude_desktop_config.json`:
 
 | Category | Tools | Category | Tools |
 |----------|-------|----------|-------|
-| actions | 184 | activity | 32 |
-| agent-tasks | 5 | apps | 37 |
-| billing | 10 | campaigns | 5 |
-| checks | 12 | classroom | 6 |
-| code-scanning | 21 | code-security | 20 |
+| actions | 200 | activity | 34 |
+| agent-automations | 12 | agent-merge | 3 |
+| agent-tasks | 5 | agents | 30 |
+| apps | 37 | billing | 13 |
+| campaigns | 5 | checks | 12 |
+| classroom | 6 | code-quality | 4 |
+| code-scanning | 25 | code-security | 20 |
 | codes-of-conduct | 2 | codespaces | 48 |
-| copilot | 25 | credentials | 1 |
-| dependabot | 22 | dependency-graph | 3 |
-| emojis | 1 | enterprise-team-memberships | 6 |
-| enterprise-team-organizations | 6 | enterprise-teams | 5 |
+| copilot | 44 | copilot-spaces | 28 |
+| credentials | 1 | dependabot | 27 |
+| dependency-graph | 5 | emojis | 1 |
 | gists | 20 | git | 13 |
 | gitignore | 2 | hosted-compute | 6 |
-| interactions | 9 | issues | 55 |
+| interactions | 16 | issues | 66 |
 | licenses | 3 | markdown | 2 |
 | meta | 5 | migrations | 22 |
-| oidc | 8 | orgs | 108 |
+| oidc | 8 | orgs | 116 |
 | packages | 27 | private-registries | 6 |
-| projects | 26 | pulls | 27 |
+| projects | 26 | pulls | 36 |
 | rate-limit | 1 | reactions | 15 |
-| repos | 201 | search | 7 |
-| secret-scanning | 9 | security-advisories | 10 |
-| teams | 32 | users | 47 |
+| repos | 204 | search | 7 |
+| secret-scanning | 17 | security-advisories | 14 |
+| teams | 32 | users | 55 |
 
 ## Tool Naming
 

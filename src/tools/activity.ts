@@ -40,6 +40,7 @@ export const activityTools = [
     description: "List notifications for the authenticated user",
     inputSchema: z.object({
       all: z.boolean().optional().describe("If `true`, show notifications marked as read."),
+      is_done: z.boolean().optional().describe("Whether to return only done notifications (`true`) or exclude them (`false`). When omitted, notifications are not filtered by done status. Use `all=true&is_done=true` for done notifications or `all=true&is_done=false` for both read and unread inbox notifications. If `all` is omitted or `false`, `is_done=true` returns no notifications."),
       participating: z.boolean().optional().describe("If `true`, only shows notifications in which the user is directly participating or mentioned."),
       since: z.string().optional().describe("Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`."),
       before: z.string().optional().describe("Only show notifications updated before the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`."),
@@ -47,7 +48,7 @@ export const activityTools = [
       per_page: z.number().optional().describe("The number of results per page (max 50). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/notifications`, undefined, { all: args.all, participating: args.participating, since: args.since, before: args.before, page: args.page, per_page: args.per_page });
+      return githubRequest("GET", `/notifications`, undefined, { all: args.all, is_done: args.is_done, participating: args.participating, since: args.since, before: args.before, page: args.page, per_page: args.per_page });
     },
   },
   {
@@ -153,6 +154,7 @@ export const activityTools = [
       owner: z.string().describe("owner"),
       repo: z.string().describe("repo"),
       all: z.boolean().optional().describe("If `true`, show notifications marked as read."),
+      is_done: z.boolean().optional().describe("Whether to return only done notifications (`true`) or exclude them (`false`). When omitted, notifications are not filtered by done status. Use `all=true&is_done=true` for done notifications or `all=true&is_done=false` for both read and unread inbox notifications. If `all` is omitted or `false`, `is_done=true` returns no notifications."),
       participating: z.boolean().optional().describe("If `true`, only shows notifications in which the user is directly participating or mentioned."),
       since: z.string().optional().describe("Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`."),
       before: z.string().optional().describe("Only show notifications updated before the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`."),
@@ -160,7 +162,7 @@ export const activityTools = [
       page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/notifications`, undefined, { all: args.all, participating: args.participating, since: args.since, before: args.before, per_page: args.per_page, page: args.page });
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/notifications`, undefined, { all: args.all, is_done: args.is_done, participating: args.participating, since: args.since, before: args.before, per_page: args.per_page, page: args.page });
     },
   },
   {
@@ -186,6 +188,30 @@ export const activityTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/repos/${args.owner}/${args.repo}/stargazers`, undefined, { per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_activity_get_stargazer_count_for_repo",
+    description: "Get stargazer count",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/stargazers/count`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_activity_get_stargazer_history_for_repo",
+    description: "Get repository star history",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      per_page: z.number().optional().describe("The number of results per page (max 30). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/stargazers/history`, undefined, { per_page: args.per_page, page: args.page });
     },
   },
   {

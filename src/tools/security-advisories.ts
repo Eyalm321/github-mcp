@@ -123,6 +123,61 @@ export const securityAdvisoriesTools = [
     },
   },
   {
+    name: "github_security_advisories_list_repository_advisory_comments",
+    description: "List repository security advisory comments",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      ghsa_id: z.string().describe("ghsa_id"),
+      since: z.string().optional().describe("Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`."),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/security-advisories/${args.ghsa_id}/comments`, undefined, { since: args.since, per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_security_advisories_create_repository_advisory_comment",
+    description: "Create a repository advisory comment",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      ghsa_id: z.string().describe("ghsa_id"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/security-advisories/${args.ghsa_id}/comments`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_security_advisories_get_repository_advisory_comment",
+    description: "Get a repository advisory comment",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      ghsa_id: z.string().describe("ghsa_id"),
+      comment_id: z.string().describe("comment_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/security-advisories/${args.ghsa_id}/comments/${args.comment_id}`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_security_advisories_update_repository_advisory_comment",
+    description: "Update a repository advisory comment",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      ghsa_id: z.string().describe("ghsa_id"),
+      comment_id: z.string().describe("comment_id"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PATCH", `/repos/${args.owner}/${args.repo}/security-advisories/${args.ghsa_id}/comments/${args.comment_id}`, args.body, undefined);
+    },
+  },
+  {
     name: "github_security_advisories_create_repository_advisory_cve_request",
     description: "Request a CVE for a repository security advisory",
     inputSchema: z.object({

@@ -6,73 +6,73 @@ vi.mock("../../client.js", () => ({
 }));
 
 import { githubRequest } from "../../client.js";
-import { enterpriseTeamMembershipsTools } from "../../tools/enterprise-team-memberships.js";
+import { agentsTools } from "../../tools/agents.js";
 
 const mockRequest = vi.mocked(githubRequest);
 
-describe("enterpriseTeamMembershipsTools", () => {
+describe("agentsTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 6 tools", () => {
-    expect(enterpriseTeamMembershipsTools).toHaveLength(6);
+  it("exports 30 tools", () => {
+    expect(agentsTools).toHaveLength(30);
   });
 
   it("has no duplicate tool names", () => {
-    const names = enterpriseTeamMembershipsTools.map((t: any) => t.name);
+    const names = agentsTools.map((t: any) => t.name);
     expect(new Set(names).size).toBe(names.length);
   });
 
-  describe("github_enterprise_team_memberships_list", () => {
-    const tool = enterpriseTeamMembershipsTools.find((t: any) => t.name === "github_enterprise_team_memberships_list")!;
+  describe("github_agents_list_org_secrets", () => {
+    const tool = agentsTools.find((t: any) => t.name === "github_agents_list_org_secrets")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_team_memberships_list");
+      expect(tool.name).toBe("github_agents_list_org_secrets");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", enterprise_team: "test-value", per_page: 1, page: 1 });
+      await tool.handler({ org: "test-value", per_page: 1, page: 1 });
       expect(mockRequest).toHaveBeenCalledTimes(1);
       expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });
   });
 
-  describe("github_enterprise_team_memberships_bulk_add", () => {
-    const tool = enterpriseTeamMembershipsTools.find((t: any) => t.name === "github_enterprise_team_memberships_bulk_add")!;
+  describe("github_agents_get_org_public_key", () => {
+    const tool = agentsTools.find((t: any) => t.name === "github_agents_get_org_public_key")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_team_memberships_bulk_add");
+      expect(tool.name).toBe("github_agents_get_org_public_key");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", enterprise_team: "test-value", body: { test: true } });
+      await tool.handler({ org: "test-value" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("POST");
+      expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });
   });
 
-  describe("github_enterprise_team_memberships_bulk_remove", () => {
-    const tool = enterpriseTeamMembershipsTools.find((t: any) => t.name === "github_enterprise_team_memberships_bulk_remove")!;
+  describe("github_agents_get_org_secret", () => {
+    const tool = agentsTools.find((t: any) => t.name === "github_agents_get_org_secret")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_enterprise_team_memberships_bulk_remove");
+      expect(tool.name).toBe("github_agents_get_org_secret");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);
     });
 
     it("calls githubRequest", async () => {
-      await tool.handler({ enterprise: "test-value", enterprise_team: "test-value", body: { test: true } });
+      await tool.handler({ org: "test-value", secret_name: "test-value" });
       expect(mockRequest).toHaveBeenCalledTimes(1);
-      expect(mockRequest.mock.calls[0][0]).toBe("POST");
+      expect(mockRequest.mock.calls[0][0]).toBe("GET");
     });
   });
 

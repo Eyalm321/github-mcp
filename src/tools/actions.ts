@@ -521,6 +521,64 @@ export const actionsTools = [
     },
   },
   {
+    name: "github_actions_get_org_actions_policies",
+    description: "List organization Actions policies",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      has_parents: z.boolean().optional().describe("Include policies configured at higher levels that apply to this organization")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/actions/policies`, undefined, { per_page: args.per_page, page: args.page, has_parents: args.has_parents });
+    },
+  },
+  {
+    name: "github_actions_create_org_actions_policy",
+    description: "Create an organization Actions policy",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/orgs/${args.org}/actions/policies`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_actions_get_org_actions_policy",
+    description: "Get an organization Actions policy",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      policy_id: z.string().describe("policy_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/actions/policies/${args.policy_id}`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_actions_update_org_actions_policy",
+    description: "Update an organization Actions policy",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      policy_id: z.string().describe("policy_id"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/orgs/${args.org}/actions/policies/${args.policy_id}`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_actions_delete_org_actions_policy",
+    description: "Delete an organization Actions policy",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      policy_id: z.string().describe("policy_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/orgs/${args.org}/actions/policies/${args.policy_id}`, undefined, undefined);
+    },
+  },
+  {
     name: "github_actions_list_self_hosted_runner_groups_for_org",
     description: "List self-hosted runner groups for an organization",
     inputSchema: z.object({
@@ -700,6 +758,17 @@ export const actionsTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/orgs/${args.org}/actions/runners`, undefined, { name: args.name, per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_actions_get_runner_version_deprecation_for_org",
+    description: "Get runner version end-of-life schedule for an organization",
+    inputSchema: z.object({
+      org: z.string().describe("org"),
+      version: z.string().describe("version")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/orgs/${args.org}/actions/runners/deprecations/${args.version}`, undefined, undefined);
     },
   },
   {
@@ -1185,6 +1254,33 @@ export const actionsTools = [
     },
   },
   {
+    name: "github_actions_list_concurrency_groups_for_repository",
+    description: "List concurrency groups for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      after: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/actions/concurrency_groups`, undefined, { per_page: args.per_page, after: args.after });
+    },
+  },
+  {
+    name: "github_actions_get_concurrency_group_for_repository",
+    description: "Get a concurrency group for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      concurrency_group_name: z.string().describe("concurrency_group_name"),
+      ahead_of_run: z.number().optional().describe("Filter to items ahead of this workflow run ID in the queue, plus the run itself. Matches workflow-level concurrency and reusable-workflow leases held on behalf of the run. Mutually exclusive with `ahead_of_job`."),
+      ahead_of_job: z.number().optional().describe("Filter to items ahead of this job ID in the queue, plus the job itself. Matches job-level concurrency and reusable-workflow leases on the job's ancestor paths. Mutually exclusive with `ahead_of_run`.")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/actions/concurrency_groups/${args.concurrency_group_name}`, undefined, { ahead_of_run: args.ahead_of_run, ahead_of_job: args.ahead_of_job });
+    },
+  },
+  {
     name: "github_actions_get_job_for_workflow_run",
     description: "Get a job for a workflow run",
     inputSchema: z.object({
@@ -1219,6 +1315,19 @@ export const actionsTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("POST", `/repos/${args.owner}/${args.repo}/actions/jobs/${args.job_id}/rerun`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_actions_download_step_logs_for_workflow_run_job",
+    description: "Download step logs for a workflow run job",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      job_id: z.string().describe("job_id"),
+      step_number: z.string().describe("step_number")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/actions/jobs/${args.job_id}/steps/${args.step_number}/logs`, undefined, undefined);
     },
   },
   {
@@ -1432,6 +1541,69 @@ export const actionsTools = [
     },
   },
   {
+    name: "github_actions_get_repo_actions_policies",
+    description: "List repository Actions policies",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      has_parents: z.boolean().optional().describe("Include policies configured at higher levels that apply to this repository")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/actions/policies`, undefined, { per_page: args.per_page, page: args.page, has_parents: args.has_parents });
+    },
+  },
+  {
+    name: "github_actions_create_repo_actions_policy",
+    description: "Create a repository Actions policy",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("POST", `/repos/${args.owner}/${args.repo}/actions/policies`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_actions_get_repo_actions_policy",
+    description: "Get a repository Actions policy",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      policy_id: z.string().describe("policy_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/actions/policies/${args.policy_id}`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_actions_update_repo_actions_policy",
+    description: "Update a repository Actions policy",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      policy_id: z.string().describe("policy_id"),
+      body: z.record(z.string(), z.unknown()).optional().describe("Request body (JSON object)")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("PUT", `/repos/${args.owner}/${args.repo}/actions/policies/${args.policy_id}`, args.body, undefined);
+    },
+  },
+  {
+    name: "github_actions_delete_repo_actions_policy",
+    description: "Delete a repository Actions policy",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      policy_id: z.string().describe("policy_id")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("DELETE", `/repos/${args.owner}/${args.repo}/actions/policies/${args.policy_id}`, undefined, undefined);
+    },
+  },
+  {
     name: "github_actions_list_self_hosted_runners_for_repo",
     description: "List self-hosted runners for a repository",
     inputSchema: z.object({
@@ -1443,6 +1615,18 @@ export const actionsTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("GET", `/repos/${args.owner}/${args.repo}/actions/runners`, undefined, { name: args.name, per_page: args.per_page, page: args.page });
+    },
+  },
+  {
+    name: "github_actions_get_runner_version_deprecation_for_repo",
+    description: "Get runner version end-of-life schedule for a repository",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      version: z.string().describe("version")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/actions/runners/deprecations/${args.version}`, undefined, undefined);
     },
   },
   {
@@ -1715,6 +1899,21 @@ export const actionsTools = [
     }),
     handler: async (args: Record<string, any>) => {
       return githubRequest("POST", `/repos/${args.owner}/${args.repo}/actions/runs/${args.run_id}/cancel`, undefined, undefined);
+    },
+  },
+  {
+    name: "github_actions_list_concurrency_groups_for_workflow_run",
+    description: "List concurrency groups for a workflow run",
+    inputSchema: z.object({
+      owner: z.string().describe("owner"),
+      repo: z.string().describe("repo"),
+      run_id: z.string().describe("run_id"),
+      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      before: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
+      after: z.string().optional().describe("A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+    }),
+    handler: async (args: Record<string, any>) => {
+      return githubRequest("GET", `/repos/${args.owner}/${args.repo}/actions/runs/${args.run_id}/concurrency_groups`, undefined, { per_page: args.per_page, before: args.before, after: args.after });
     },
   },
   {

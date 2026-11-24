@@ -13,8 +13,8 @@ const mockRequest = vi.mocked(githubRequest);
 describe("copilotTools", () => {
   beforeEach(() => { mockRequest.mockClear(); });
 
-  it("exports 25 tools", () => {
-    expect(copilotTools).toHaveLength(25);
+  it("exports 44 tools", () => {
+    expect(copilotTools).toHaveLength(44);
   });
 
   it("has no duplicate tool names", () => {
@@ -58,12 +58,12 @@ describe("copilotTools", () => {
     });
   });
 
-  describe("github_copilot_copilot_users_one_day_usage_metrics", () => {
-    const tool = copilotTools.find((t: any) => t.name === "github_copilot_copilot_users_one_day_usage_metrics")!;
+  describe("github_copilot_copilot_enterprise_repos_one_day_report", () => {
+    const tool = copilotTools.find((t: any) => t.name === "github_copilot_copilot_enterprise_repos_one_day_report")!;
 
     it("exists and has required properties", () => {
       expect(tool).toBeDefined();
-      expect(tool.name).toBe("github_copilot_copilot_users_one_day_usage_metrics");
+      expect(tool.name).toBe("github_copilot_copilot_enterprise_repos_one_day_report");
       expect(tool.description).toBeTruthy();
       expect(tool.inputSchema).toBeDefined();
       expect(tool.handler).toBeInstanceOf(Function);

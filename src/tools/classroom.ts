@@ -5,7 +5,7 @@ import { githubRequest } from "../client.js";
 export const classroomTools = [
   {
     name: "github_classroom_get_an_assignment",
-    description: "Get an assignment",
+    description: "Closed - Get an assignment",
     inputSchema: z.object({
       assignment_id: z.string().describe("assignment_id")
     }),
@@ -15,19 +15,17 @@ export const classroomTools = [
   },
   {
     name: "github_classroom_list_accepted_assignments_for_an_assignment",
-    description: "List accepted assignments for an assignment",
+    description: "Closed - List accepted assignments for an assignment",
     inputSchema: z.object({
-      assignment_id: z.string().describe("assignment_id"),
-      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
-      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+      assignment_id: z.string().describe("assignment_id")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/assignments/${args.assignment_id}/accepted_assignments`, undefined, { page: args.page, per_page: args.per_page });
+      return githubRequest("GET", `/assignments/${args.assignment_id}/accepted_assignments`, undefined, undefined);
     },
   },
   {
     name: "github_classroom_get_assignment_grades",
-    description: "Get assignment grades",
+    description: "Closed - Get assignment grades",
     inputSchema: z.object({
       assignment_id: z.string().describe("assignment_id")
     }),
@@ -37,18 +35,15 @@ export const classroomTools = [
   },
   {
     name: "github_classroom_list_classrooms",
-    description: "List classrooms",
-    inputSchema: z.object({
-      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
-      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
-    }),
+    description: "Closed - List classrooms",
+    inputSchema: z.object({}),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/classrooms`, undefined, { page: args.page, per_page: args.per_page });
+      return githubRequest("GET", `/classrooms`, undefined, undefined);
     },
   },
   {
     name: "github_classroom_get_a_classroom",
-    description: "Get a classroom",
+    description: "Closed - Get a classroom",
     inputSchema: z.object({
       classroom_id: z.string().describe("classroom_id")
     }),
@@ -58,14 +53,12 @@ export const classroomTools = [
   },
   {
     name: "github_classroom_list_assignments_for_a_classroom",
-    description: "List assignments for a classroom",
+    description: "Closed - List assignments for a classroom",
     inputSchema: z.object({
-      classroom_id: z.string().describe("classroom_id"),
-      page: z.number().optional().describe("The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""),
-      per_page: z.number().optional().describe("The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"")
+      classroom_id: z.string().describe("classroom_id")
     }),
     handler: async (args: Record<string, any>) => {
-      return githubRequest("GET", `/classrooms/${args.classroom_id}/assignments`, undefined, { page: args.page, per_page: args.per_page });
+      return githubRequest("GET", `/classrooms/${args.classroom_id}/assignments`, undefined, undefined);
     },
   },
 ];
