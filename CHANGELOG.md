@@ -6,6 +6,7 @@ Breaking: 20 tools are removed (their operations are no longer in GitHub's descr
 
 ### Added
 - Tools regenerated from the current api.github.com REST description: 1,281 tools in 46 categories (was 1,112 in 44), 189 new. New categories: `agent-automations`, `agent-merge`, `agents`, `code-quality`, `copilot-spaces`; existing categories gain the operations GitHub added (for example the new Copilot usage-metrics reports).
+- Every tool carries MCP annotations from its HTTP method, so clients can tell reads from writes: `GET` tools are `readOnlyHint`, `DELETE` tools `destructiveHint` and `idempotentHint`, `PUT` tools `idempotentHint`; all are `openWorldHint` (they call api.github.com). Tools register through `registerTool`.
 
 ### Removed
 - `enterprise-teams`, `enterprise-team-memberships` and `enterprise-team-organizations` (17 tools): GitHub moved `/enterprises/{enterprise}/teams*` out of the api.github.com description (they are GitHub Enterprise Cloud only).
@@ -16,6 +17,7 @@ Breaking: 20 tools are removed (their operations are no longer in GitHub's descr
 - Requires Node 22 or later (`engines.node >=22`); Node 20 reached end of life in April 2026. CI tests Node 22 and 24; the publish workflow's build and GitHub Packages jobs run on Node 22 (the npm job stays on Node 24 for trusted publishing). `@types/node` follows the lowest supported major (^22).
 - Development: `npm run generate` removes generated files the description no longer produces, so a regenerate is the whole tool set.
 - Development: `npm run generate` runs the generator straight under Node's TypeScript type stripping (`scripts/generate.mts`, Node 22.18+) and `npm run dev` builds with `tsc` then starts `dist`; `ts-node` is no longer a dev dependency (it needs the TypeScript JS API, which TypeScript 7 does not ship). The published package is unchanged.
+- Development: generated files name `scripts/generate.mts` in their header, and the generated `src/index.ts` takes the server version from `package.json` (it said 1.0.0).
 
 ## 1.0.4 (2026-11-16)
 
