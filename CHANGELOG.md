@@ -2,8 +2,19 @@
 
 ## Unreleased
 
+Breaking: 20 tools are removed (their operations are no longer in GitHub's description), so this ships as a major version.
+
+### Added
+- Tools regenerated from the current api.github.com REST description: 1,281 tools in 46 categories (was 1,112 in 44), 189 new. New categories: `agent-automations`, `agent-merge`, `agents`, `code-quality`, `copilot-spaces`; existing categories gain the operations GitHub added (for example the new Copilot usage-metrics reports).
+
+### Removed
+- `enterprise-teams`, `enterprise-team-memberships` and `enterprise-team-organizations` (17 tools): GitHub moved `/enterprises/{enterprise}/teams*` out of the api.github.com description (they are GitHub Enterprise Cloud only).
+- `github_agent_tasks_create_task`: the description now has `agent-tasks/create-task-in-repo` instead; use `github_agent_tasks_create_task_in_repo`.
+- `github_copilot_copilot_metrics_for_organization` and `github_copilot_copilot_metrics_for_team`: no longer in the description; the new `github_copilot_copilot_*_usage_metrics` tools cover Copilot usage metrics.
+
 ### Changed
 - Requires Node 22 or later (`engines.node >=22`); Node 20 reached end of life in April 2026. CI tests Node 22 and 24; the publish workflow's build and GitHub Packages jobs run on Node 22 (the npm job stays on Node 24 for trusted publishing). `@types/node` follows the lowest supported major (^22).
+- Development: `npm run generate` removes generated files the description no longer produces, so a regenerate is the whole tool set.
 - Development: `npm run generate` runs the generator straight under Node's TypeScript type stripping (`scripts/generate.mts`, Node 22.18+) and `npm run dev` builds with `tsc` then starts `dist`; `ts-node` is no longer a dev dependency (it needs the TypeScript JS API, which TypeScript 7 does not ship). The published package is unchanged.
 
 ## 1.0.4 (2026-11-16)
