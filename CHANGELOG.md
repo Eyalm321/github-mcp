@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.0 (2026-11-24)
 
 Breaking: 20 tools are removed (their operations are no longer in GitHub's description), so this ships as a major version.
 
@@ -17,6 +17,7 @@ Breaking: 20 tools are removed (their operations are no longer in GitHub's descr
 - Requires Node 22 or later (`engines.node >=22`); Node 20 reached end of life in April 2026. CI tests Node 22 and 24; the publish workflow's build and GitHub Packages jobs run on Node 22 (the npm job stays on Node 24 for trusted publishing). `@types/node` follows the lowest supported major (^22).
 - Development: `npm run generate` removes generated files the description no longer produces, so a regenerate is the whole tool set.
 - Development: `npm run generate` runs the generator straight under Node's TypeScript type stripping (`scripts/generate.mts`, Node 22.18+) and `npm run dev` builds with `tsc` then starts `dist`; `ts-node` is no longer a dev dependency (it needs the TypeScript JS API, which TypeScript 7 does not ship). The published package is unchanged.
+- Development: TypeScript 7.0.2 and vitest 5.1.0 (dev dependencies only; the build output is unchanged apart from declaration enum order).
 - Development: generated files name `scripts/generate.mts` in their header, and the generated `src/index.ts` takes the server version from `package.json` (it said 1.0.0).
 
 ## 1.0.4 (2026-11-16)
